@@ -17,6 +17,8 @@ Row │ Branch  FB     TB     R_Ohm    X_ohm    Bus      P_MW        Q_MW
 
 This exemple also can be found in ```example.jl```.
 
+The data example is also available in [Dolatabadi et. al. (2021)](https://ieeexplore.ieee.org/document/9258930).
+
 ```julia
 using CSV, DataFrames
 using JuMP
