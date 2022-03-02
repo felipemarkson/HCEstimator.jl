@@ -27,7 +27,7 @@ using Ipopt
 using HCEstimator
 
 
-data = DataFrame(CSV.File("./data.csv"))
+data = DataFrame(CSV.File("./exemple_data.csv"))
 
 VL = 0.95   #Lower limit voltage
 VH = 1.05  #Higher limit voltage
