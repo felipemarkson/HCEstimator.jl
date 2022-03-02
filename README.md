@@ -1,6 +1,6 @@
-# Hosting Capacity Estimation
+# Hosting Capacity Estimator
 
-
+This library provides a Distributed Generators (DGs) Hosting Capacity (HC) of distribution systems considering that Distribution Company (DisCo) owned other DGs installed in the system.
 
 ## Getting Started
 
@@ -17,7 +17,7 @@ Row │ Branch  FB     TB     R_Ohm    X_ohm    Bus      P_MW        Q_MW
 
 This exemple also can be found in ```example.jl```.
 
-The data example is also available in [Dolatabadi et. al. (2021)](https://ieeexplore.ieee.org/document/9258930).
+The distribution system of the example is also available in [Dolatabadi et. al. (2021)](https://ieeexplore.ieee.org/document/9258930).
 
 ```julia
 using CSV, DataFrames
