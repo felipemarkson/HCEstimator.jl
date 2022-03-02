@@ -44,7 +44,7 @@ sub = DistSystem.Substation(
 dg1 = DistSystem.DG(
     18,                     # Bus
     0.2,                    # Active power limit(MW)
-    0.4,                    # Reative power limit(MW)
+    0.4,                    # Reactive power limit(MVAr)
     [210; 10.26; 0.0026]    # Costs [Fixed, Linear, Quadratic]
 )
 
