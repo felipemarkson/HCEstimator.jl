@@ -94,13 +94,16 @@ function nl_pf(model, sys)
     )
 
     #Losses
+    @expression(model, Ploss_ij[i=buses, j=buses, l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
+        if abs(G[i,j]) > ε #Numerical Issue
+            I²ij[i, j, l, k, s]/G[i,j]
+        else
+            0.0
+        end
+    )
     @expression(model, Ploss[l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]], 
         sum(sum(
-            if abs(G[i,j]) > ε #Numerical Issue
-                I²ij[i, j, l, k, s]/G[i,j]
-            else
-                0.0
-            end
+            Ploss_ij[i,j, l, k, s]
         for i in buses) for j in buses)
     )
 
