@@ -263,11 +263,19 @@ $$ -->
 ## Roadmap
 
 [x] Define the model
+
 [x] Implement the model on JuMP.jl
+
 [x] High-level interface for HC estimation
+
 [x] Initial documentation
+
 [x] Implement the minimization of costs.
+
 [ ] Implement changes on system's topology.
+
 [ ] Implement tests for power flow calculation using a simple system
+
 [ ] Describe the relationship between the model and codebase
+
 [ ] Better Documentation
