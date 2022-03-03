@@ -13,9 +13,13 @@ Row │ Branch  FB     TB     R_Ohm    X_ohm    Bus      P_MW        Q_MW
 ────┼─────────────────────────────────────────────────────────────────────
 ```
 
+### Dependencies
+
+You will need [Julia](https://julialang.org/) v1.6 or greater, [JuMP.jl](https://jump.dev/)  v0.23 or greater, and a nonlinear solver compatible with [JuMP.jl](https://jump.dev/) and the model described below.
+
 ### Exemple of use
 
-This exemple also can be found in ```example.jl```.
+This exemple also can be found in [example.jl](example.jl).
 
 The distribution system of the example is also available in [Dolatabadi et. al. (2021)](https://ieeexplore.ieee.org/document/9258930).
 
