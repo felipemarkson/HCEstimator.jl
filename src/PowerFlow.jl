@@ -57,20 +57,12 @@ function nl_pf(model, sys)
 
     #Real Current Flow
     @expression(model, Iijre[i = buses, j=buses, l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
-        if (G[i,j] ≈ 0) & (B[i,j] ≈ 0)
-            0.0
-        else
-            ((Vre[i, l, k, s] - Vre[j, l, k, s])*G[i,j] + (Vim[i, l, k, s] - Vim[j, l, k, s])*B[i,j])/(G[i,j]^2 +  B[i,j]^2)
-        end
+        (Vre[i, l, k, s] - Vre[j, l, k, s])*G[i,j] - (Vim[i, l, k, s] - Vim[j, l, k, s])*B[i,j]
     )
 
     #Imaginary Current Flow
     @expression(model, Iijim[i = buses, j=buses, l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
-        if (G[i,j] ≈ 0) & (B[i,j] ≈ 0)
-            0.0
-        else
-            (-(Vre[i, l, k, s] - Vre[j, l, k, s])*B[i,j] + (Vim[i, l, k, s] - Vim[j, l, k, s])*G[i,j])/(G[i,j]^2 +  B[i,j]^2)
-        end       
+        (Vre[i, l, k, s] - Vre[j, l, k, s])*B[i,j] + (Vim[i, l, k, s] - Vim[j, l, k, s])*G[i,j]        
     )
 
     #Squared Current Flow Module
@@ -92,30 +84,25 @@ function nl_pf(model, sys)
     @expression(model, Ploss[l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]], sum(P[b, l, k, s] for b in buses))
 
     #Voltage Constraint
-    @constraints(model, begin
-        upper_limit[b = buses, l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
-        V²[b, l, k, s] <= VH^2
-        lower_limit[b = buses, l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
-        V²[b, l, k, s] >= VL^2
-    end)
+    for b = buses, l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]
+        @constraints(model, begin
+            V²[b, l, k, s] <= VH^2
+            V²[b, l, k, s] >= VL^2
+        end)
+    end
 
     # Substation Constraints
-    @constraints(model, begin
-        active_power[l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
-        P[sub.bus, l, k, s] >= 0.0
-        limit_active_power[l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
-        P[sub.bus, l, k, s] <= sub.P_limit
-        reactive_power[l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
-        Q[sub.bus, l, k, s] >= 0.0
-        limit_reactive_power[l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
-        Q[sub.bus, l, k, s] <= sub.Q_limit
-        module_current[l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
-        I²[sub.bus, l, k, s] >= 0.0
-        voltage[l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
-        Vre[sub.bus, l, k, s] == sub.voltage
-        angle_zero[l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
-        Vim[sub.bus, l, k, s] == 0.0
-    end)
+    for l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]
+        @constraints(model, begin
+            P[sub.bus, l, k, s] >= 0.0
+            P[sub.bus, l, k, s] <= sub.P_limit
+            Q[sub.bus, l, k, s] >= 0.0
+            Q[sub.bus, l, k, s] <= sub.Q_limit
+            I²[sub.bus, l, k, s] >= 0.0
+            Vre[sub.bus, l, k, s] == sub.voltage
+            Vim[sub.bus, l, k, s] == 0.0
+        end)
+    end
 
     return model
 end
