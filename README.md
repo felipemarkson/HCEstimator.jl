@@ -8,10 +8,11 @@ This library provides a Distributed Generators (DGs) Hosting Capacity (HC) of di
 
 The ```DistSystem.System``` structure expected a [DataFrames.jl](https://dataframes.juliadata.org/stable/) with the follow columns:
 ```
-Row │ Branch  FB     TB     R_Ohm    X_ohm    Bus      P_MW        Q_MW        
-    │ Int64   Int64  Int64  Float64  Float64  Int64    Float64     Float64
-────┼─────────────────────────────────────────────────────────────────────
+Row │ Branch  FB     TB     Type     R_Ohm    X_ohm    Bus      P_MW        Q_MVAr      Bshunt_MVAr
+    │ Int64   Int64  Int64  String   Float64  Float64  Int64    Float64     Float64     Float64
+────┼──────────────────────────────────────────────────────────────────────────────────────────────────
 ```
+The active branches must have "Fixed" in ```Type``` field.
 
 ### Dependencies
 

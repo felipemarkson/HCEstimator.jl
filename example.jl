@@ -22,7 +22,7 @@ sub = DistSystem.Substation(
 dg1 = DistSystem.DG(
     18,                     # Bus
     0.2,                    # Active power limit(MW)
-    0.4,                    # Reative power limit(MW)
+    0.0,                    # Reative power limit(MW)
     [210; 10.26; 0.0026]    # Costs [Fixed, Linear, Quadratic]
 )
 
@@ -32,7 +32,7 @@ sys.dgs = [
     dg1,
     DistSystem.DG(22, 0.2, 0.,[210; 10.26; 0.0026]),
     DistSystem.DG(25, 0.2, 0.,[210; 10.26; 0.0026]),
-    DistSystem.DG(33, 0.2, 0.6,[210; 10.26; 0.0026])
+    DistSystem.DG(33, 0.2, 0.,[210; 10.26; 0.0026])
 ]
 sys.m_load = collect(0.6:0.2:1.2) # Load Multipliers
 sys.m_new_dg = [
