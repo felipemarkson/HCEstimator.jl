@@ -34,7 +34,7 @@ sys.dgs = [
     DistSystem.DG(25, 0.2, 0.,[210; 10.26; 0.0026]),
     DistSystem.DG(33, 0.2, 0.,[210; 10.26; 0.0026])
 ]
-sys.m_load = collect(0.6:0.2:1.2) # Load Multipliers
+sys.m_load = collect(0.6:0.2:1) # Load Multipliers
 sys.m_new_dg = [
     collect(0.0:0.2:1) # Generic generator Multipliers
 ]
