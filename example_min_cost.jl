@@ -41,4 +41,4 @@ model = build_model(model, sys, false) # Build the Cost model
 optimize!(model)                # Optimize!
 
 
-print("Costs: ", objective_value(model))
+println("Costs: ", objective_value(model))

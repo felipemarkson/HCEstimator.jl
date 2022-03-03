@@ -43,4 +43,4 @@ model = Model(Ipopt.Optimizer)  # Create a JuMP model
 model = build_model(model, sys) # Build the HC model
 optimize!(model)                # Optimize!
 
-print("Hosting Capacity: ", objective_value(model))
+println("Hosting Capacity: ", objective_value(model))
