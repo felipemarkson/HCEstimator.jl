@@ -197,33 +197,61 @@ function dg_and_loads(model, sys)
     return model
 end
 
-function factory_objective(model, sys)
+function HC_objective(model, sys)
     m_scenario_new_dg = sys.m_new_dg
     set_types_new_dg = 1:length(m_scenario_new_dg)
     dgs = sys.dgs
     set_dgs = 1:length(dgs)    
 
-    Ploss = model[:Ploss]
     Pnew_dg = model[:Pnew_dg]
     Pnew = model[:Pnew]
-
-    @expression(model, all_loses, sum(sum(sum(Ploss))))
 
     @expression(model, HC[k=set_types_new_dg], Pnew[k]*sys.nbuses + sum(Pnew_dg[d,k] for d in set_dgs))
 
     @objective(model, Max, sum(model[:HC]))
-
     return model
-
-
 end
 
-function factory_model(model, sys)
-    model = nl_pf(model, sys)
-    model = costs(model, sys)    
-    model = dg_and_loads(model, sys)
-    model = factory_objective(model, sys)   
+function Costs_objective(model, sys)
+    load_scenario = 1:length(sys.m_load)
 
+    m_scenario_new_dg = sys.m_new_dg
+    set_types_new_dg = 1:length(m_scenario_new_dg)    
+    set_scenarios_new_dg = [1:length(scenario) for scenario in m_scenario_new_dg]
+
+    Total_cost = model[:Total_cost]
+
+
+    @NLobjective(model, Min, sum(sum(sum(
+                    Total_cost[l,k,s]
+                for s = set_scenarios_new_dg[k])
+            for k = set_types_new_dg)
+        for l = load_scenario)
+    )
+    return model
+    
+end
+
+function set_hc_zero(model, sys)  
+    Pnew = model[:Pnew]
+    m_scenario_new_dg = sys.m_new_dg
+    set_types_new_dg = 1:length(m_scenario_new_dg)  
+    @constraint(model, zero_hc[k= set_types_new_dg],
+        Pnew[k] <= 0
+    )
+    return model
+end
+
+function factory_model(model, sys, hc=true)
+    model = nl_pf(model, sys)   
+    model = dg_and_loads(model, sys)
+    model = costs(model, sys) 
+    if hc
+        model = HC_objective(model, sys)
+    else
+        model = set_hc_zero(model, sys)   
+        model = Costs_objective(model, sys)
+    end
     return model    
 end
 

@@ -57,9 +57,10 @@ function factory_system(data::DataFrame, VL::Float64, VH::Float64, sub::Substati
     sys.VL = VL
     sys.VH = VH
     sys.m_load = [1.0]
-    sys.m_new_dg = [[1.0]]
+    sys.m_new_dg = [[0.0]]
     sys.PL = data.P_MW[1:sys.nbuses]
     sys.QL = data.Q_MW[1:sys.nbuses]
+    sys.dgs = []
 
     sys.substation = sub
 
