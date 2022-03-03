@@ -1,6 +1,6 @@
 module HCEstimator
 
-export DistSystem, build_model
+export DistSystem, build_model, Get
 
 using JuMP
 
