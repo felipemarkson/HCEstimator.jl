@@ -29,7 +29,7 @@ function nl_pf(model, sys)
     @variable(model, 0 <= Pdg[i = set_dgs, load_scenario, k = set_types_new_dg, set_scenarios_new_dg[k]] <= Pdg_limit[i], start = 0.0)
     @variable(model, 0 <= Qdg[i = set_dgs, load_scenario, k = set_types_new_dg, set_scenarios_new_dg[k]] <= Qdg_limit[i], start = 0.0)
 
-    #Voltage Module
+    #Squared Voltage Module
     @expression(model, V²[b = buses, l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
         Vre[b, l, k, s]^2 + Vim[b, l, k, s]^2
     )
@@ -50,9 +50,32 @@ function nl_pf(model, sys)
         )
     )
 
-    #Current Module
+    #Squared Current Module
     @expression(model, I²[b = buses, l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
         Ire[b, l, k, s]^2 + Iim[b, l, k, s]^2
+    )
+
+    #Real Current Flow
+    @expression(model, Iijre[i = buses, j=buses, l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
+        if (G[i,j] ≈ 0) & (B[i,j] ≈ 0)
+            0.0
+        else
+            ((Vre[i, l, k, s] - Vre[j, l, k, s])*G[i,j] + (Vim[i, l, k, s] - Vim[j, l, k, s])*B[i,j])/(G[i,j]^2 +  B[i,j]^2)
+        end
+    )
+
+    #Imaginary Current Flow
+    @expression(model, Iijim[i = buses, j=buses, l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
+        if (G[i,j] ≈ 0) & (B[i,j] ≈ 0)
+            0.0
+        else
+            (-(Vre[i, l, k, s] - Vre[j, l, k, s])*B[i,j] + (Vim[i, l, k, s] - Vim[j, l, k, s])*G[i,j])/(G[i,j]^2 +  B[i,j]^2)
+        end       
+    )
+
+    #Squared Current Flow Module
+    @expression(model, I²ij[i = buses, j=buses, l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
+        Iijre[i,j,l,k,s]^2 + Iijim[i,j,l,k,s]^2
     )
 
     #Active Power
