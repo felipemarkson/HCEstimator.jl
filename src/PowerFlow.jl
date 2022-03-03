@@ -3,9 +3,14 @@ using JuMP
 
 export factory_model
 
+mc_re(a,b,c,d) = a*c - b*d # Real( (a + ib) * (c + id) )
+mc_im(a,b,c,d) = a*d + b*c # Imag( (a + ib) * (c + id) )
+ε = 1e-12
+
 function nl_pf(model, sys)
     G = real(sys.Y)
     B = imag(sys.Y)
+    Bsh = sys.Bsh
 
     VH = sys.VH
     VL = sys.VL
@@ -72,16 +77,32 @@ function nl_pf(model, sys)
 
     #Active Power
     @expression(model, P[b = buses, l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
-        Vre[b, l, k, s] * Ire[b, l, k, s] + Vim[b, l, k, s] * Iim[b, l, k, s]
+        mc_re(Vre[b, l, k, s], Vim[b, l, k, s], Ire[b, l, k, s], -Iim[b, l, k, s])
     )
 
     #Reactive Power
     @expression(model, Q[b = buses, l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
-        Vim[b, l, k, s] * Ire[b, l, k, s] - Vre[b, l, k, s] * Iim[b, l, k, s]
+        mc_im(Vre[b, l, k, s], Vim[b, l, k, s], Ire[b, l, k, s], -Iim[b, l, k, s])
+    )
+
+    #Current contribution of Bsh
+    @expression(model, I_bsh_re[b = buses, l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
+        mc_re(Vre[b, l, k, s], Vim[b, l, k, s], 0.0, Bsh[b])
+    )
+    @expression(model, I_bsh_im[b = buses, l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
+        mc_im(Vre[b, l, k, s], Vim[b, l, k, s], 0.0, Bsh[b])
     )
 
     #Losses
-    @expression(model, Ploss[l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]], sum(P[b, l, k, s] for b in buses))
+    @expression(model, Ploss[l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]], 
+        sum(sum(
+            if abs(G[i,j]) > ε #Numerical Issue
+                I²ij[i, j, l, k, s]/G[i,j]
+            else
+                0.0
+            end
+        for i in buses) for j in buses)
+    )
 
     #Voltage Constraint
     for b = buses, l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]
