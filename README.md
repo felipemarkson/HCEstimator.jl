@@ -121,6 +121,23 @@ q_{blks} = q^{DG}_{dlks} - \mu^L_lQ^L_ b\\
 $$ -->
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;\begin{matrix}\text{Power&space;injection}\\\text{in&space;buses&space;with&space;DGs}\end{matrix}\begin{cases}p_{blks}&space;=&space;&space;\mu^{HC}_{ks}p^{HC}_{kd}&space;&plus;&space;p^{DG}_{dlks}&space;-&space;\mu^L_lP^L_&space;b\\&space;q_{blks}&space;=&space;q^{DG}_{dlks}&space;-&space;\mu^L_lQ^L_&space;b\\\forall&space;d&space;\in&space;D,&space;\forall&space;b&space;\in&space;\{b_d\},&space;\forall&space;l&space;\in&space;L,&space;\forall&space;k&space;\in&space;K,&space;\forall&space;s&space;\in&space;S_k\end{cases}" title="\bg_white \begin{matrix}\text{Power injection}\\\text{in buses with DGs}\end{matrix}\begin{cases}p_{blks} = \mu^{HC}_{ks}p^{HC}_{kd} + p^{DG}_{dlks} - \mu^L_lP^L_ b\\ q_{blks} = q^{DG}_{dlks} - \mu^L_lQ^L_ b\\\forall d \in D, \forall b \in \{b_d\}, \forall l \in L, \forall k \in K, \forall s \in S_k\end{cases}" />
 
+
+<!-- $$
+\begin{matrix}
+\text{Current}\\
+\text{injection balance}
+\end{matrix}
+\begin{cases}
+\sum_{b \in \Omega}
+i^{\Re}_{blks} = 0 
+\\
+\sum_{b \in \Omega}
+i^{\Im}_{blks} = 0 \\
+\forall l \in L, \forall k \in K, \forall s \in S_k
+\end{cases}
+$$ -->
+<img src="https://latex.codecogs.com/svg.latex?\bg_white&space;\begin{matrix}\text{Current}\\\text{injection&space;balance}\end{matrix}\begin{cases}\sum_{b&space;\in&space;\Omega}i^{\Re}_{blks}&space;=&space;0&space;\\\sum_{b&space;\in&space;\Omega}i^{\Im}_{blks}&space;=&space;0&space;\\\forall&space;l&space;\in&space;L,&space;\forall&space;k&space;\in&space;K,&space;\forall&space;s&space;\in&space;S_k\end{cases}" title="http://latex.codecogs.com/svg.latex?\bg_white \begin{matrix}\text{Current}\\\text{injection balance}\end{matrix}\begin{cases}\sum_{b \in \Omega}i^{\Re}_{blks} = 0 \\\sum_{b \in \Omega}i^{\Im}_{blks} = 0 \\\forall l \in L, \forall k \in K, \forall s \in S_k\end{cases}" />
+
 <!-- $$
 \begin{matrix}
 \text{Power, voltage }\\

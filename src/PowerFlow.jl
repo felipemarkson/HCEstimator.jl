@@ -56,13 +56,15 @@ function nl_pf(model, sys)
     )
 
     #Sum I == 0
-    @constraints(model, begin
-        sum(Ire) >= -ε  #Numerical Issue
-        sum(Ire) <= ε   #Numerical Issue
-        sum(Iim) >= -ε  #Numerical Issue
-        sum(Iim) <= ε   #Numerical Issue    
+    for l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]
+        @constraints(model, begin
+            sum(Ire[b, l, k, s] for b in buses) >= -ε  #Numerical Issue
+            sum(Ire[b, l, k, s] for b in buses) <= ε   #Numerical Issue
+            sum(Iim[b, l, k, s] for b in buses) >= -ε  #Numerical Issue
+            sum(Iim[b, l, k, s] for b in buses) <= ε   #Numerical Issue    
+        end
+        )
     end
-    )
 
     #Squared Current Module
     @expression(model, I²[b = buses, l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
