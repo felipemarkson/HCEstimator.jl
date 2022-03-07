@@ -39,6 +39,13 @@ function nl_pf(model, sys)
         Vre[b, l, k, s]^2 + Vim[b, l, k, s]^2
     )
 
+
+    #  I = Y*V
+    #   Ref: On the numerical solving of complex linear systems https://ijpam.eu/contents/2012-76-1/11/11.pdf
+    #  |Ire|   |G   -B|   |Vre|
+    #  |   | = |      | * |   |
+    #  |Iim|   |B    G|   |Vim|
+      
     #Real Current
     @expression(model, Ire[b = buses, l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
         sum(
@@ -94,12 +101,12 @@ function nl_pf(model, sys)
         Iijre[i,j,l,k,s]^2 + Iijim[i,j,l,k,s]^2
     )
 
-    #Active Power
+    #Active Power Injected
     @expression(model, P[b = buses, l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
         mc_re(Vre[b, l, k, s], Vim[b, l, k, s], Ire[b, l, k, s], -Iim[b, l, k, s])
     )
 
-    #Reactive Power
+    #Reactive Power Injected
     @expression(model, Q[b = buses, l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
         mc_im(Vre[b, l, k, s], Vim[b, l, k, s], Ire[b, l, k, s], -Iim[b, l, k, s])
     )
