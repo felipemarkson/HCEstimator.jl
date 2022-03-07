@@ -55,6 +55,15 @@ function nl_pf(model, sys)
         )
     )
 
+    #Sum I == 0
+    @constraints(model, begin
+        sum(Ire) >= -ε  #Numerical Issue
+        sum(Ire) <= ε   #Numerical Issue
+        sum(Iim) >= -ε  #Numerical Issue
+        sum(Iim) <= ε   #Numerical Issue    
+    end
+    )
+
     #Squared Current Module
     @expression(model, I²[b = buses, l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
         Ire[b, l, k, s]^2 + Iim[b, l, k, s]^2
@@ -101,18 +110,8 @@ function nl_pf(model, sys)
         mc_im(Vre[b, l, k, s], Vim[b, l, k, s], 0.0, Bsh[b])
     )
 
-    #Losses
-    @expression(model, Ploss_ij[i=buses, j=buses, l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
-        if abs(G[i,j]) > ε #Numerical Issue
-            I²ij[i, j, l, k, s]/G[i,j]
-        else
-            0.0
-        end
-    )
     @expression(model, Ploss[l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]], 
-        sum(sum(
-            Ploss_ij[i,j, l, k, s]
-        for i in buses) for j in buses)
+        sum(P[b, l, k, s] for b=buses)
     )
 
     #Voltage Constraint
