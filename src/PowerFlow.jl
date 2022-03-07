@@ -62,12 +62,20 @@ function nl_pf(model, sys)
 
     #Real Current Flow
     @expression(model, Iijre[i = buses, j=buses, l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
-        (Vre[i, l, k, s] - Vre[j, l, k, s])*G[i,j] - (Vim[i, l, k, s] - Vim[j, l, k, s])*B[i,j]
+        begin
+            Vij_re = Vre[i, l, k, s] - Vre[j, l, k, s]
+            Vib_im = Vim[i, l, k, s] - Vim[j, l, k, s]
+            return mc_re(Vij_re, Vib_im, G[i,j], B[i,j])
+        end    
     )
 
     #Imaginary Current Flow
     @expression(model, Iijim[i = buses, j=buses, l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
-        (Vre[i, l, k, s] - Vre[j, l, k, s])*B[i,j] + (Vim[i, l, k, s] - Vim[j, l, k, s])*G[i,j]        
+        begin
+            Vij_re = Vre[i, l, k, s] - Vre[j, l, k, s]
+            Vib_im = Vim[i, l, k, s] - Vim[j, l, k, s]
+            return mc_im(Vij_re, Vib_im, G[i,j], B[i,j])
+        end 
     )
 
     #Squared Current Flow Module
