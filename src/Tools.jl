@@ -25,7 +25,7 @@ function make_Y_bus(data, VN)
     for i in 1:n_bus
         for j in 1:n_bus
             if i == j
-                Y[i, j] = sum(admitance.(Z[i,:])) #+ Bshunt[i]
+                Y[i, j] = sum(admitance.(Z[i,:])) + Bshunt[i]
             else
                 Y[i, j] = - admitance(Z[i,j])
             end
