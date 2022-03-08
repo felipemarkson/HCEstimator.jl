@@ -3,8 +3,8 @@ using JuMP
 
 export factory_model
 
-mc_re(a,b,c,d) = a*c - b*d # Real( (a + ib) * (c + id) )
-mc_im(a,b,c,d) = a*d + b*c # Imag( (a + ib) * (c + id) )
+mc_re(a, b, c, d) = a * c - b * d # Real( (a + ib) * (c + id) )
+mc_im(a, b, c, d) = a * d + b * c # Imag( (a + ib) * (c + id) )
 ε = 1e-12
 
 function nl_pf(model, sys)
@@ -24,7 +24,7 @@ function nl_pf(model, sys)
     load_scenario = 1:length(sys.m_load)
 
     m_scenario_new_dg = sys.m_new_dg
-    set_types_new_dg = 1:length(m_scenario_new_dg)    
+    set_types_new_dg = 1:length(m_scenario_new_dg)
     set_scenarios_new_dg = [1:length(scenario) for scenario in m_scenario_new_dg]
 
     buses = collect(1:sys.nbuses)
@@ -45,7 +45,7 @@ function nl_pf(model, sys)
     #  |Ire|   |G   -B|   |Vre|
     #  |   | = |      | * |   |
     #  |Iim|   |B    G|   |Vim|
-      
+
     #Real Current
     @expression(model, Ire[b = buses, l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
         sum(
@@ -79,26 +79,26 @@ function nl_pf(model, sys)
     )
 
     #Real Current Flow
-    @expression(model, Iijre[i = buses, j=buses, l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
+    @expression(model, Iijre[i = buses, j = buses, l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
         begin
             Vij_re = Vre[i, l, k, s] - Vre[j, l, k, s]
             Vib_im = Vim[i, l, k, s] - Vim[j, l, k, s]
-            return mc_re(Vij_re, Vib_im, G[i,j], B[i,j])
-        end    
+            return mc_re(Vij_re, Vib_im, G[i, j], B[i, j])
+        end
     )
 
     #Imaginary Current Flow
-    @expression(model, Iijim[i = buses, j=buses, l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
+    @expression(model, Iijim[i = buses, j = buses, l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
         begin
             Vij_re = Vre[i, l, k, s] - Vre[j, l, k, s]
             Vib_im = Vim[i, l, k, s] - Vim[j, l, k, s]
-            return mc_im(Vij_re, Vib_im, G[i,j], B[i,j])
-        end 
+            return mc_im(Vij_re, Vib_im, G[i, j], B[i, j])
+        end
     )
 
     #Squared Current Flow Module
-    @expression(model, I²ij[i = buses, j=buses, l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
-        Iijre[i,j,l,k,s]^2 + Iijim[i,j,l,k,s]^2
+    @expression(model, I²ij[i = buses, j = buses, l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
+        Iijre[i, j, l, k, s]^2 + Iijim[i, j, l, k, s]^2
     )
 
     #Active Power Injected
@@ -119,8 +119,8 @@ function nl_pf(model, sys)
         mc_im(Vre[b, l, k, s], Vim[b, l, k, s], 0.0, Bsh[b])
     )
 
-    @expression(model, Ploss[l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]], 
-        sum(P[b, l, k, s] for b=buses)
+    @expression(model, Ploss[l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
+        sum(P[b, l, k, s] for b = buses)
     )
 
     #Voltage Constraint
@@ -152,7 +152,7 @@ function costs(model, sys)
     load_scenario = 1:length(sys.m_load)
 
     m_scenario_new_dg = sys.m_new_dg
-    set_types_new_dg = 1:length(m_scenario_new_dg)    
+    set_types_new_dg = 1:length(m_scenario_new_dg)
     set_scenarios_new_dg = [1:length(scenario) for scenario in m_scenario_new_dg]
 
     dgs = sys.dgs
@@ -188,7 +188,7 @@ function dg_and_loads(model, sys)
     m_load = sys.m_load
 
     m_scenario_new_dg = sys.m_new_dg
-    set_types_new_dg = 1:length(m_scenario_new_dg)    
+    set_types_new_dg = 1:length(m_scenario_new_dg)
     set_scenarios_new_dg = [1:length(scenario) for scenario in m_scenario_new_dg]
 
     PL = sys.PL
@@ -215,7 +215,7 @@ function dg_and_loads(model, sys)
         Q[b, l, k, s] == -m_load[l] * QL[b]
     )
     @constraint(model, p_no_dg[b = buses_nodg, l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
-        P[b, l, k, s] == -m_load[l] * PL[b] + m_scenario_new_dg[k][s]*Pnew[k]
+        P[b, l, k, s] == -m_load[l] * PL[b] + m_scenario_new_dg[k][s] * Pnew[k]
     )
 
     ## Active  for buses with DisCo's DGs
@@ -226,11 +226,11 @@ function dg_and_loads(model, sys)
         Q[b, l, k, s] == -m_load[l] * QL[b] + Qdg[d, l, k, s]
     )
     @constraint(model, p_w_dg[d = set_dgs, b = dgs_bus[d], l = load_scenario, k = set_types_new_dg, s = set_scenarios_new_dg[k]],
-        P[b, l, k, s] == -m_load[l] * PL[b] + Pdg[d, l, k, s] + m_scenario_new_dg[k][s]*Pnew_dg[d,k]
+        P[b, l, k, s] == -m_load[l] * PL[b] + Pdg[d, l, k, s] + m_scenario_new_dg[k][s] * Pnew_dg[d, k]
     )
 
 
-    @constraint(model, limit_w[d = set_dgs, k= set_types_new_dg],
+    @constraint(model, limit_w[d = set_dgs, k = set_types_new_dg],
         Pnew_dg[d, k] <= Pnew[k]
     )
 
@@ -241,12 +241,12 @@ function HC_objective(model, sys)
     m_scenario_new_dg = sys.m_new_dg
     set_types_new_dg = 1:length(m_scenario_new_dg)
     dgs = sys.dgs
-    set_dgs = 1:length(dgs)    
+    set_dgs = 1:length(dgs)
 
     Pnew_dg = model[:Pnew_dg]
     Pnew = model[:Pnew]
 
-    @expression(model, HC[k=set_types_new_dg], Pnew[k]*sys.nbuses + sum(Pnew_dg[d,k] for d in set_dgs))
+    @expression(model, HC[k = set_types_new_dg], Pnew[k] * sys.nbuses + sum(Pnew_dg[d, k] for d in set_dgs))
 
     @objective(model, Max, sum(model[:HC]))
     return model
@@ -256,43 +256,43 @@ function Costs_objective(model, sys)
     load_scenario = 1:length(sys.m_load)
 
     m_scenario_new_dg = sys.m_new_dg
-    set_types_new_dg = 1:length(m_scenario_new_dg)    
+    set_types_new_dg = 1:length(m_scenario_new_dg)
     set_scenarios_new_dg = [1:length(scenario) for scenario in m_scenario_new_dg]
 
     Total_cost = model[:Total_cost]
 
 
     @NLobjective(model, Min, sum(sum(sum(
-                    Total_cost[l,k,s]
-                for s = set_scenarios_new_dg[k])
-            for k = set_types_new_dg)
-        for l = load_scenario)
+        Total_cost[l, k, s]
+        for s = set_scenarios_new_dg[k])
+                                     for k = set_types_new_dg)
+                                 for l = load_scenario)
     )
     return model
-    
+
 end
 
-function set_hc_zero(model, sys)  
+function set_hc_zero(model, sys)
     Pnew = model[:Pnew]
     m_scenario_new_dg = sys.m_new_dg
-    set_types_new_dg = 1:length(m_scenario_new_dg)  
-    @constraint(model, zero_hc[k= set_types_new_dg],
+    set_types_new_dg = 1:length(m_scenario_new_dg)
+    @constraint(model, zero_hc[k = set_types_new_dg],
         Pnew[k] <= 0
     )
     return model
 end
 
-function factory_model(model, sys, hc=true)
-    model = nl_pf(model, sys)   
+function factory_model(model, sys, hc = true)
+    model = nl_pf(model, sys)
     model = dg_and_loads(model, sys)
-    model = costs(model, sys) 
+    model = costs(model, sys)
     if hc
         model = HC_objective(model, sys)
     else
-        model = set_hc_zero(model, sys)   
+        model = set_hc_zero(model, sys)
         model = Costs_objective(model, sys)
     end
-    return model    
+    return model
 end
 
 end
