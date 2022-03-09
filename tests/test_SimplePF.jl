@@ -214,8 +214,6 @@ function test_nl_pf(sot, sys)
     return sot
 end
 
-function test_solve_case3_dist()
-
 function util_test_case!(model, name, V_expected, angle_expected)
 
     @testset "solve $name" begin
@@ -232,7 +230,6 @@ function util_test_case!(model, name, V_expected, angle_expected)
         @testset "Angle: Bus $i" for (i, returned) in enumerate(θ)
             @test angle_expected[i] .≈ returned atol = 1e-3
         end
-
     end
 end
 
