@@ -216,11 +216,9 @@ end
 
 function test_solve_case3_dist()
 
-    V_expected = [1.000 0.964 0.951]
-    angle_expected = [0.0 -1.826 -2.644]
-    model = SimplePF.nl_pf(Model(), case3_dist())
+function util_test_case!(model, name, V_expected, angle_expected)
 
-    @testset "solve case3_dist" begin
+    @testset "solve $name" begin
         set_optimizer(model, Ipopt.Optimizer)
         set_silent(model)
         optimize!(model)
@@ -236,6 +234,14 @@ function test_solve_case3_dist()
         end
 
     end
+end
+
+function test_solve_case3_dist()
+
+    V_expected = [1.000 0.964 0.951]
+    angle_expected = [0.0 -1.826 -2.644]
+    model = SimplePF.nl_pf(Model(), case3_dist())
+    util_test_case!(model, "case3_dist", V_expected, angle_expected)
 
 end
 
