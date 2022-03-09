@@ -47,7 +47,7 @@ function case33()
     Sb = 1e6
     Yb = Sb / (VN^2)
     Vsub = 1.0
-    P_limt = 2.5
+    P_limt = 4
     Q_limit = 2.5
     bus_sub = 1
     nbuses = 33
@@ -257,17 +257,26 @@ function util_test_case!(model, sys, case)
         set_optimizer(model, Ipopt.Optimizer)
         set_silent(model)
         optimize!(model)
-        @test termination_status(model) == LOCALLY_SOLVED
-        @test primal_status(model) == FEASIBLE_POINT
+
+
+        @testset "Optimization" begin
+            @testset "Solved: $(termination_status(model))" begin
+                @test termination_status(model) == LOCALLY_SOLVED
+            end
+            @testset "Feasible: $(primal_status(model))" begin
+                @test primal_status(model) == FEASIBLE_POINT
+            end
+        end
+
         V = value.(model[:V_module])
         θ = value.(model[:V_angle_deg])
-        @testset "Solutions Bus $i" for i = sys.buses
-            v = round(V[i], digits=4)
-            ang = round(θ[i], digits=4)
+        @testset "Solution for Bus $i" for i = sys.buses
+            v = round(V[i], digits = 4)
+            ang = round(θ[i], digits = 4)
             @testset "Voltage: $v" begin
                 @test case.V_expected[i] ≈ V[i] atol = 1e-4
             end
-            @testset "Angle: $ang" begin
+            @testset "Angle: $(ang)°" begin
                 @test case.angle_expected[i] ≈ θ[i] atol = 1e-4
             end
         end
@@ -279,13 +288,6 @@ function test_solve_case(case)
     model = SimplePF.nl_pf(Model(), sys)
     util_test_case!(model, sys, actual_case)
 
-end
-
-function test_solve_case33_dist()
-    V_expected =
-        angle_expected =
-            model = SimplePF.nl_pf(Model(), case33())
-    util_test_case!(model, "case33", V_expected, angle_expected)
 end
 
 function runtests()
@@ -301,8 +303,9 @@ function runtests()
                 sot = test_add_substation_constraint(sot, sys)
                 sot = test_add_power_injection_definition(sot, sys)
                 sot = test_nl_pf(sot, sys, case)
+                test_solve_case(case)
             end
-            test_solve_case(case)
+
         end
         test_complex_multiplication()
     end
