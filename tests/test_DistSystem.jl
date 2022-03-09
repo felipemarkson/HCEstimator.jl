@@ -40,14 +40,14 @@ function test_factory_system()
         @test nbuses == sys.nbuses
         @test VL == sys.VL
         @test VH == sys.VH
-        @test data.P_MW == sys.PL
-        @test data.Q_MVAr == sys.QL
+        @test collect(skipmissing(data.P_MW)) == sys.PL
+        @test collect(skipmissing(data.Q_MVAr)) == sys.QL
         @test [1.0] == sys.m_load
         @test [[0.0]] == sys.m_new_dg
         @test sub == sys.substation
         @test [] == sys.dgs  
-        @test Bsh == sys.Bsh
-        @test data.Bus == sys.buses
+        @test -collect(skipmissing(data.Bshunt_MVAr)) == sys.Bsh
+        @test collect(skipmissing(data.Bus)) == sys.buses
         
     end
 end

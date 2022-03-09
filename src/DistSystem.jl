@@ -1,4 +1,5 @@
 module DistSystem
+using DataFrames
 
 export Substation, DG, System, Get, factory_system
 
@@ -41,8 +42,6 @@ mutable struct System
 end
 
 function factory_system(data::DataFrame, VL::Float64, VH::Float64, sub::Substation)
-
-
     sys = System()
 
     ### System's Data
@@ -58,12 +57,12 @@ function factory_system(data::DataFrame, VL::Float64, VH::Float64, sub::Substati
     sys.VH = VH
     sys.m_load = [1.0]
     sys.m_new_dg = [[0.0]]
-    sys.PL = data.P_MW[1:sys.nbuses]
-    sys.QL = data.Q_MVAr[1:sys.nbuses]
+    sys.PL = collect(skipmissing(data.P_MW))
+    sys.QL = collect(skipmissing(data.Q_MVAr))
     sys.dgs = []
-    sys.Bsh = (-(data.Bshunt_MVAr * 1e6) ./ (sub.nominal_voltage^2)) / Yᴺ
+    sys.Bsh = (-(collect(skipmissing(data.Bshunt_MVAr)) * 1e6) ./ (sub.nominal_voltage^2)) / Yᴺ
 
-    sys.buses= data.Bus
+    sys.buses = collect(skipmissing(data.Bus))
 
     sys.substation = sub
 
