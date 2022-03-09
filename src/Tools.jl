@@ -1,5 +1,5 @@
 module Tools
-
+using DataFrames
 export make_Y_bus
 
 function admitance(value)
@@ -13,11 +13,12 @@ function make_Y_bus(data, VN)
     Y = zeros(Complex, n_bus, n_bus)
     Z = zeros(Complex, n_bus, n_bus) .+ Inf
 
-    branch_data = data[data.Type.=="Fixed", [:FB, :TB, :R_Ohm, :X_ohm]]
+    branch = dropmissing(data[:, [:FB, :TB, :Type, :R_Ohm, :X_ohm]])
+    branch = branch[branch.Type.=="Fixed", :]
 
     Bshunt = 1im * (data.Bshunt_MVAr * 1e6) ./ (VN^2)
 
-    for value in eachrow(branch_data)
+    for value in eachrow(branch)
         Z[value.FB, value.TB] = value.R_Ohm + 1im * value.X_ohm
         Z[value.TB, value.FB] = value.R_Ohm + 1im * value.X_ohm
     end

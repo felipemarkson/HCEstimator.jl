@@ -1,6 +1,6 @@
 module DistSystem
 
-export Substation, DG, System, Get
+export Substation, DG, System, Get, factory_system
 
 include("Tools.jl")
 using .Tools
@@ -36,10 +36,9 @@ mutable struct System
     substation
     dgs
     Bsh
-    System(data::DataFrame, VL::Float64, VH::Float64, sub::Substation) = factory_system(data::DataFrame, VL::Float64, VH::Float64, sub::Substation)
+    buses
     System() = new()
 end
-
 
 function factory_system(data::DataFrame, VL::Float64, VH::Float64, sub::Substation)
 
@@ -63,6 +62,8 @@ function factory_system(data::DataFrame, VL::Float64, VH::Float64, sub::Substati
     sys.QL = data.Q_MVAr[1:sys.nbuses]
     sys.dgs = []
     sys.Bsh = (-(data.Bshunt_MVAr * 1e6) ./ (sub.nominal_voltage^2)) / Yᴺ
+
+    sys.buses= data.Bus
 
     sys.substation = sub
 
