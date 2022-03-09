@@ -48,7 +48,7 @@ function test_add_variables(sot, sys)
     sot = SimplePF.add_variables(sot, sys)
     @testset "add_variables" begin
         @test sot isa Model
-        @test num_variables(sot) == 6
+        @test num_variables(sot) == sys.nbuses*2
 
         @testset "V[$(i)]" for i = sys.buses
             @testset "Start values" begin
@@ -203,9 +203,9 @@ function test_add_power_injection_definition(sot, sys)
     return sot
 end
 
-function test_nl_pf(sot, sys)
+function test_nl_pf(sot, sys, case)
 
-    other_sys = case3_dist()
+    other_sys, name = case()
     model = SimplePF.nl_pf(Model(), other_sys)
     @testset "nl_pf" begin
         #Find a better way to test it 
@@ -244,16 +244,20 @@ end
 
 function runtests()
     @testset "SimplePF" begin
-        sys = case3_dist()
-        sot = Model()
-        sot = test_add_variables(sot, sys)
-        sot = test_add_voltage_constraints(sot, sys)
-        sot = test_add_I_V_relationship(sot, sys)
-        sot = test_add_S_VI_relationship(sot, sys)
-        sot = test_add_substation_constraint(sot, sys)
-        sot = test_add_power_injection_definition(sot, sys)
-        sot = test_nl_pf(sot, sys)
-        test_solve_case3_dist()
+        for case in [case3_dist]
+            sys, name = case()
+            @testset "$name" begin
+                sot = Model()
+                sot = test_add_variables(sot, sys)
+                sot = test_add_voltage_constraints(sot, sys)
+                sot = test_add_I_V_relationship(sot, sys)
+                sot = test_add_S_VI_relationship(sot, sys)
+                sot = test_add_substation_constraint(sot, sys)
+                sot = test_add_power_injection_definition(sot, sys)
+                sot = test_nl_pf(sot, sys, case)
+            end
+        end
+        test_complex_multiplication()
     end
 end
 end
