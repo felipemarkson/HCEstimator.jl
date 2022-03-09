@@ -32,7 +32,7 @@ function test_complex_multiplication()
     z2 = -2 + 5im
     z3 = z1 * z2
     z1v = [real(z1), imag(z1)]
-    z2v = [real(z2), real(z2)]
+    z2v = [real(z2), imag(z2)]
 
     z3re = SimplePF.mc_re(z1v[1], z1v[2], z2v[1], z2v[2])
     z3im = SimplePF.mc_im(z1v[1], z1v[2], z2v[1], z2v[2])
