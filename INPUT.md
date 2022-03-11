@@ -1,4 +1,4 @@
-<!-- INPUT FILE TO README FOR readme2tex -->
+<!-- INPUT FILE TO README FOR readme2tex! -->
 
 # Hosting Capacity Estimator
 

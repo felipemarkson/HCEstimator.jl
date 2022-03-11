@@ -1,3 +1,5 @@
+<!-- INPUT FILE TO README FOR readme2tex! -->
+
 # Hosting Capacity Estimator
 
 This library provides a Distributed Generators (DGs) Hosting Capacity (HC) of distribution systems considering that Distribution Company (DisCo) owned other DGs installed in the system.
@@ -78,151 +80,31 @@ println("Hosting Capacity: ", objective_value(model))
 This library uses the following model:
 
 
-<!-- $\text{max.        }$  -->
+<img src="https://rawgit.com/felipemarkson/HCEstimator.jl/Fixes-bugs-related-to-Matpower/svgs/d14abed1a5115037397da740c933f4dc.svg?invert_in_darkmode" align=middle width=35.15994899999999pt height=14.15524440000002pt/> 
 
-<img src="https://latex.codecogs.com/svg.image?\bg_white&space;\text{max.&space;&space;&space;&space;&space;&space;&space;&space;}&space;" title="\bg_white \text{max. } " />
 
-<!-- $$
-\text{Hosting Capacity}
-\begin{cases}
-\sum_{k \in K} N^B p^{HC}_k + \sum_{d \in D}  p^{HC}_{kd}
-\end{cases}
-$$ -->
+<p align="center"><img src="https://rawgit.com/felipemarkson/HCEstimator.jl/Fixes-bugs-related-to-Matpower/svgs/9440c3753d7bb170f2ba3e904f295d29.svg?invert_in_darkmode" align=middle width=194.91340605pt height=29.58934275pt/></p>
 
-<img src="https://latex.codecogs.com/svg.image?\bg_white&space;\text{Hosting&space;Capacity}\begin{cases}\sum_{k&space;\in&space;K}&space;N^B&space;p^{HC}_k&space;&plus;&space;\sum_{d&space;\in&space;D}&space;&space;p^{HC}_{kd}\end{cases}" title="\bg_white \text{Hosting Capacity}\begin{cases}\sum_{k \in K} N^B p^{HC}_k + \sum_{d \in D} p^{HC}_{kd}\end{cases}" />
  
-<!-- $\text{s.t.        }$ -->
-
-<img src="https://latex.codecogs.com/svg.image?\bg_white&space;\text{s.t.&space;&space;&space;&space;&space;&space;&space;&space;}" title="\bg_white \text{s.t. }" />
-
-<!-- $$
-\begin{matrix}
-\text{Power injection}\\
-\text{in buses without DGs}
-\end{matrix}
-\begin{cases}
-p_{blks} =  \mu^{HC}_{ks}p^{HC}_k - \mu^L_lP^L_ b\\ 
-q_{blks} = - \mu^L_lQ^L_ b\\
-\forall b \in \overline{\Omega}, \forall l \in L, \forall k \in K, \forall s \in S_k
-\end{cases}
-$$ -->
-<img src="https://latex.codecogs.com/svg.image?\bg_white&space;\begin{matrix}\text{Power&space;injection}\\\text{in&space;buses&space;without&space;DGs}\end{matrix}\begin{cases}p_{blks}&space;=&space;&space;\mu^{HC}_{ks}p^{HC}_k&space;-&space;\mu^L_lP^L_&space;b\\&space;q_{blks}&space;=&space;-&space;\mu^L_lQ^L_&space;b\\\forall&space;b&space;\in&space;\overline{\Omega},&space;\forall&space;l&space;\in&space;L,&space;\forall&space;k&space;\in&space;K,&space;\forall&space;s&space;\in&space;S_k\end{cases}" title="\bg_white \begin{matrix}\text{Power injection}\\\text{in buses without DGs}\end{matrix}\begin{cases}p_{blks} = \mu^{HC}_{ks}p^{HC}_k - \mu^L_lP^L_ b\\ q_{blks} = - \mu^L_lQ^L_ b\\\forall b \in \overline{\Omega}, \forall l \in L, \forall k \in K, \forall s \in S_k\end{cases}" />
-
-<!-- $$
-\begin{matrix}
-\text{Power injection}\\
-\text{in buses with DGs}
-\end{matrix}
-\begin{cases}
-p_{blks} =  \mu^{HC}_{ks}p^{HC}_{kd} + p^{DG}_{dlks} - \mu^L_lP^L_ b\\ 
-q_{blks} = q^{DG}_{dlks} - \mu^L_lQ^L_ b\\
-\forall d \in D, \forall b \in \{b_d\}, \forall l \in L, \forall k \in K, \forall s \in S_k
-\end{cases}
-$$ -->
-<img src="https://latex.codecogs.com/svg.image?\bg_white&space;\begin{matrix}\text{Power&space;injection}\\\text{in&space;buses&space;with&space;DGs}\end{matrix}\begin{cases}p_{blks}&space;=&space;&space;\mu^{HC}_{ks}p^{HC}_{kd}&space;&plus;&space;p^{DG}_{dlks}&space;-&space;\mu^L_lP^L_&space;b\\&space;q_{blks}&space;=&space;q^{DG}_{dlks}&space;-&space;\mu^L_lQ^L_&space;b\\\forall&space;d&space;\in&space;D,&space;\forall&space;b&space;\in&space;\{b_d\},&space;\forall&space;l&space;\in&space;L,&space;\forall&space;k&space;\in&space;K,&space;\forall&space;s&space;\in&space;S_k\end{cases}" title="\bg_white \begin{matrix}\text{Power injection}\\\text{in buses with DGs}\end{matrix}\begin{cases}p_{blks} = \mu^{HC}_{ks}p^{HC}_{kd} + p^{DG}_{dlks} - \mu^L_lP^L_ b\\ q_{blks} = q^{DG}_{dlks} - \mu^L_lQ^L_ b\\\forall d \in D, \forall b \in \{b_d\}, \forall l \in L, \forall k \in K, \forall s \in S_k\end{cases}" />
+<img src="https://rawgit.com/felipemarkson/HCEstimator.jl/Fixes-bugs-related-to-Matpower/svgs/9dc19dc073dbefeb7f85c0f086c9ec27.svg?invert_in_darkmode" align=middle width=22.009199849999987pt height=20.221802699999984pt/>
 
 
-<!-- $$
-\begin{matrix}
-\text{Current}\\
-\text{injection balance}
-\end{matrix}
-\begin{cases}
-\sum_{b \in \Omega}
-i^{\Re}_{blks} = 0 
-\\
-\sum_{b \in \Omega}
-i^{\Im}_{blks} = 0 \\
-\forall l \in L, \forall k \in K, \forall s \in S_k
-\end{cases}
-$$ -->
-<img src="https://latex.codecogs.com/svg.latex?\bg_white&space;\begin{matrix}\text{Current}\\\text{injection&space;balance}\end{matrix}\begin{cases}\sum_{b&space;\in&space;\Omega}i^{\Re}_{blks}&space;=&space;0&space;\\\sum_{b&space;\in&space;\Omega}i^{\Im}_{blks}&space;=&space;0&space;\\\forall&space;l&space;\in&space;L,&space;\forall&space;k&space;\in&space;K,&space;\forall&space;s&space;\in&space;S_k\end{cases}" title="http://latex.codecogs.com/svg.latex?\bg_white \begin{matrix}\text{Current}\\\text{injection balance}\end{matrix}\begin{cases}\sum_{b \in \Omega}i^{\Re}_{blks} = 0 \\\sum_{b \in \Omega}i^{\Im}_{blks} = 0 \\\forall l \in L, \forall k \in K, \forall s \in S_k\end{cases}" />
+<p align="center"><img src="https://rawgit.com/felipemarkson/HCEstimator.jl/Fixes-bugs-related-to-Matpower/svgs/931940eb20c39d40451c2c3521091032.svg?invert_in_darkmode" align=middle width=363.8212578pt height=69.0417981pt/></p>
 
-<!-- $$
-\begin{matrix}
-\text{Power, voltage }\\
-\text{and current}\\
-\text{relationship}
-\end{matrix}
-\begin{cases}
-p_{blks} = v^{\Re}_{blks}i^{\Re}_{blks} + v^{\Im}_{blks}i^{\Im}_{blks}\\ 
-q_{blks} = v^{\Im}_{blks}i^{\Re}_{blks} - v^{\Re}_{blks}i^{\Im}_{blks}\\
-i^{\Re}_{blks} = \sum_{j \in \Omega} G_{bj}v^{\Re}_{jlks} - B_{bj}v^{\Im}_{jlks}\\
-i^{\Im}_{blks} = \sum_{j \in \Omega} B_{bj}v^{\Re}_{jlks} + G_{bj}v^{\Im}_{jlks}\\
-\forall b \in \Omega, \forall l \in L, \forall k \in K ,\forall s \in S_k
-\end{cases}
-$$ -->
-<img src="https://latex.codecogs.com/svg.image?\bg_white&space;\begin{matrix}\text{Power,&space;voltage&space;}\\\text{and&space;current}\\\text{relationship}\end{matrix}\begin{cases}p_{blks}&space;=&space;v^{\Re}_{blks}i^{\Re}_{blks}&space;&plus;&space;v^{\Im}_{blks}i^{\Im}_{blks}\\&space;q_{blks}&space;=&space;v^{\Im}_{blks}i^{\Re}_{blks}&space;-&space;v^{\Re}_{blks}i^{\Im}_{blks}\\i^{\Re}_{blks}&space;=&space;\sum_{j&space;\in&space;\Omega}&space;G_{bj}v^{\Re}_{jlks}&space;-&space;B_{bj}v^{\Im}_{jlks}\\i^{\Im}_{blks}&space;=&space;\sum_{j&space;\in&space;\Omega}&space;B_{bj}v^{\Re}_{jlks}&space;&plus;&space;G_{bj}v^{\Im}_{jlks}\\\forall&space;b&space;\in&space;\Omega,&space;\forall&space;l&space;\in&space;L,&space;\forall&space;k&space;\in&space;K&space;,\forall&space;s&space;\in&space;S_k\end{cases}" title="\bg_white \begin{matrix}\text{Power, voltage }\\\text{and current}\\\text{relationship}\end{matrix}\begin{cases}p_{blks} = v^{\Re}_{blks}i^{\Re}_{blks} + v^{\Im}_{blks}i^{\Im}_{blks}\\ q_{blks} = v^{\Im}_{blks}i^{\Re}_{blks} - v^{\Re}_{blks}i^{\Im}_{blks}\\i^{\Re}_{blks} = \sum_{j \in \Omega} G_{bj}v^{\Re}_{jlks} - B_{bj}v^{\Im}_{jlks}\\i^{\Im}_{blks} = \sum_{j \in \Omega} B_{bj}v^{\Re}_{jlks} + G_{bj}v^{\Im}_{jlks}\\\forall b \in \Omega, \forall l \in L, \forall k \in K ,\forall s \in S_k\end{cases}" />
+<p align="center"><img src="https://rawgit.com/felipemarkson/HCEstimator.jl/Fixes-bugs-related-to-Matpower/svgs/ed6c42b3d7ccc4a6af275e5ca6c0b908.svg?invert_in_darkmode" align=middle width=454.9440225pt height=69.0417981pt/></p>
+
+<p align="center"><img src="https://rawgit.com/felipemarkson/HCEstimator.jl/Fixes-bugs-related-to-Matpower/svgs/9b30c7275cfd7d1824970757c6dbfadb.svg?invert_in_darkmode" align=middle width=360.06316664999997pt height=118.35736770000001pt/></p>
 
 
-<!-- $$
-\text{Voltage limits}
-\begin{cases}
-(\underline{V})^2\leq(v^{\Re}_{blks})^2 + (v^{\Im}_{blks})^2 \leq (\overline{V})^2\\
-\forall b \in \Omega, \forall l \in L, \forall k \in K ,\forall s \in S_k
-\end{cases}
-$$ -->
-<img src="https://latex.codecogs.com/svg.image?\bg_white&space;\text{Voltage&space;limits}\begin{cases}(\underline{V})^2\leq(v^{\Re}_{blks})^2&space;&plus;&space;(v^{\Im}_{blks})^2&space;\leq&space;(\overline{V})^2\\\forall&space;b&space;\in&space;\Omega,&space;\forall&space;l&space;\in&space;L,&space;\forall&space;k&space;\in&space;K&space;,\forall&space;s&space;\in&space;S_k\end{cases}" title="\bg_white \text{Voltage limits}\begin{cases}(\underline{V})^2\leq(v^{\Re}_{blks})^2 + (v^{\Im}_{blks})^2 \leq (\overline{V})^2\\\forall b \in \Omega, \forall l \in L, \forall k \in K ,\forall s \in S_k\end{cases}" />
+<p align="center"><img src="https://rawgit.com/felipemarkson/HCEstimator.jl/Fixes-bugs-related-to-Matpower/svgs/140c4fc7f4941ce36d531461eecea83c.svg?invert_in_darkmode" align=middle width=350.37468345pt height=49.315569599999996pt/></p>
 
-<!-- $$\begin{matrix}
-\text{Substation}\\
-\text{constraints}\\
-\end{matrix}
-\begin{cases}
-v^{\Re}_{blks} = V^{SB}\\
-v^{\Im}_{blks} = 0\\
-0 \leq p_{blks} \leq \overline{P^{SB}}\\
-0 \leq q_{blks} \leq \overline{Q^{SB}}\\
-(i^{\Re}_{blks})^2 + (i^{\Im}_{blks})^2 \geq 0\\
-\forall b \in \{b^{SB}\}, \forall l \in L, \forall k \in K ,\forall s \in S_k
-\end{cases}
-$$ -->
-<img src="https://latex.codecogs.com/svg.image?\bg_white&space;\begin{matrix}\text{Substation}\\\text{constraints}\\\end{matrix}\begin{cases}v^{\Re}_{blks}&space;=&space;V^{SB}\\v^{\Im}_{blks}&space;=&space;0\\0&space;\leq&space;p_{blks}&space;\leq&space;\overline{P^{SB}}\\0&space;\leq&space;q_{blks}&space;\leq&space;\overline{Q^{SB}}\\(i^{\Re}_{blks})^2&space;&plus;&space;(i^{\Im}_{blks})^2&space;\geq&space;0\\\forall&space;b&space;\in&space;\{b^{SB}\},&space;\forall&space;l&space;\in&space;L,&space;\forall&space;k&space;\in&space;K&space;,\forall&space;s&space;\in&space;S_k\end{cases}" title="\bg_white \begin{matrix}\text{Substation}\\\text{constraints}\\\end{matrix}\begin{cases}v^{\Re}_{blks} = V^{SB}\\v^{\Im}_{blks} = 0\\0 \leq p_{blks} \leq \overline{P^{SB}}\\0 \leq q_{blks} \leq \overline{Q^{SB}}\\(i^{\Re}_{blks})^2 + (i^{\Im}_{blks})^2 \geq 0\\\forall b \in \{b^{SB}\}, \forall l \in L, \forall k \in K ,\forall s \in S_k\end{cases}" />
+<p align="center"><img src="https://rawgit.com/felipemarkson/HCEstimator.jl/Fixes-bugs-related-to-Matpower/svgs/cea9b2ff541f7c0eef5d5bf2e9f5e06d.svg?invert_in_darkmode" align=middle width=343.48524705pt height=138.0835962pt/></p>
 
-<!-- $$
-\begin{matrix}
-\text{Limit of power}\\
-\text{in buses with DG}
-\end{matrix}
-\begin{cases}
-  p^{HC}_{kd} \leq p^{HC}_{k}\\
-  \forall k \in K ,\forall d \in D
-\end{cases}
-$$ -->
-<img src="https://latex.codecogs.com/svg.image?\bg_white&space;\begin{matrix}\text{Limit&space;of&space;power}\\\text{in&space;buses&space;with&space;DG}\end{matrix}\begin{cases}&space;&space;p^{HC}_{kd}&space;\leq&space;p^{HC}_{k}\\&space;&space;\forall&space;k&space;\in&space;K&space;,\forall&space;d&space;\in&space;D\end{cases}" title="\bg_white \begin{matrix}\text{Limit of power}\\\text{in buses with DG}\end{matrix}\begin{cases} p^{HC}_{kd} \leq p^{HC}_{k}\\ \forall k \in K ,\forall d \in D\end{cases}" />
+<p align="center"><img src="https://rawgit.com/felipemarkson/HCEstimator.jl/Fixes-bugs-related-to-Matpower/svgs/6fd7e9d98ba44eafdfba57e808494e34.svg?invert_in_darkmode" align=middle width=357.31348125pt height=71.00466449999999pt/></p>
 
+<p align="center"><img src="https://rawgit.com/felipemarkson/HCEstimator.jl/Fixes-bugs-related-to-Matpower/svgs/90fb0d5e5abbeac5741960ea44d7ee53.svg?invert_in_darkmode" align=middle width=365.81203724999995pt height=69.0417981pt/></p>
 
-<!-- $$
-\text{DGs limits}
-\begin{cases}
-0\leq p^{DG}_{dlks} \leq \overline{P^{DG}_{d}}\\
-0\leq q^{DG}_{dlks} \leq \overline{Q^{DG}_{d}}\\
-\forall d \in D, \forall l \in L, \forall k \in K ,\forall s \in S_k
-\end{cases}
-$$ -->
-<img src="https://latex.codecogs.com/svg.image?\bg_white&space;\text{DGs&space;limits}\begin{cases}0\leq&space;p^{DG}_{dlks}&space;\leq&space;\overline{P^{DG}_{d}}\\0\leq&space;q^{DG}_{dlks}&space;\leq&space;\overline{Q^{DG}_{d}}\\\forall&space;d&space;\in&space;D,&space;\forall&space;l&space;\in&space;L,&space;\forall&space;k&space;\in&space;K&space;,\forall&space;s&space;\in&space;S_k\end{cases}" title="\bg_white \text{DGs limits}\begin{cases}0\leq p^{DG}_{dlks} \leq \overline{P^{DG}_{d}}\\0\leq q^{DG}_{dlks} \leq \overline{Q^{DG}_{d}}\\\forall d \in D, \forall l \in L, \forall k \in K ,\forall s \in S_k\end{cases}" />
-
-<!-- $$\begin{matrix}
-\text{Power, voltage }\\
-\text{and current}\\
-\text{constraints}
-\end{matrix}
-\begin{cases}
--M \leq p_{blks}, q_{blks}, i^{\Re}_{blks}, i^{\Im}_{blks}\leq M\\
--\overline{V}\leq v^{\Re}_{blks}, v^{\Im}_{blks} \leq \overline{V}\\
-\forall b \in \Omega, \forall l \in L, \forall k \in K ,\forall s \in S_k
-\end{cases}
-$$ -->
-<img src="https://latex.codecogs.com/svg.image?\bg_white&space;\begin{matrix}\text{Power,&space;voltage&space;}\\\text{and&space;current}\\\text{constraints}\end{matrix}\begin{cases}-M&space;\leq&space;p_{blks},&space;q_{blks},&space;i^{\Re}_{blks},&space;i^{\Im}_{blks}\leq&space;M\\-\overline{V}\leq&space;v^{\Re}_{blks},&space;v^{\Im}_{blks}&space;\leq&space;\overline{V}\\\forall&space;b&space;\in&space;\Omega,&space;\forall&space;l&space;\in&space;L,&space;\forall&space;k&space;\in&space;K&space;,\forall&space;s&space;\in&space;S_k\end{cases}" title="\bg_white \begin{matrix}\text{Power, voltage }\\\text{and current}\\\text{constraints}\end{matrix}\begin{cases}-M \leq p_{blks}, q_{blks}, i^{\Re}_{blks}, i^{\Im}_{blks}\leq M\\-\overline{V}\leq v^{\Re}_{blks}, v^{\Im}_{blks} \leq \overline{V}\\\forall b \in \Omega, \forall l \in L, \forall k \in K ,\forall s \in S_k\end{cases}" />
-
-
-<!-- $$
-\text{Costs}
-\begin{cases}
-\large?
-\end{cases}
-$$ -->
-<!-- <img src="https://latex.codecogs.com/svg.image?\bg_white&space;\text{Costs}\begin{cases}\large?\end{cases}" title="\bg_white \text{Costs}\begin{cases}\large?\end{cases}" /> -->
+<!-- <p align="center"><img src="https://rawgit.com/felipemarkson/HCEstimator.jl/Fixes-bugs-related-to-Matpower/svgs/e45858c011938cbd92291e86b38f0383.svg?invert_in_darkmode" align=middle width=60.913292549999994pt height=29.58934275pt/></p> -->
 
 
 
@@ -230,9 +112,9 @@ $$ -->
 
 ### Variables
 
-<img src="https://latex.codecogs.com/svg.image?\bg_white&space;p^{HC}" title="\bg_white p^{HC}" />: Active power injection to HC calculation
+<img src="https://rawgit.com/felipemarkson/HCEstimator.jl/Fixes-bugs-related-to-Matpower/svgs/2b7c31b7df641cd2ffc8154ea6e90540.svg?invert_in_darkmode" align=middle width=30.15119909999999pt height=27.6567522pt/>: Active power injection to HC calculation
 
-<img src="https://latex.codecogs.com/svg.image?\bg_white&space;p^{DG},&space;q^{DG}" title="\bg_white p^{DG}, q^{DG}" />: Active and reactive power injection of DisCo's DG
+<img src="https://rawgit.com/felipemarkson/HCEstimator.jl/Fixes-bugs-related-to-Matpower/svgs/4c684c9947c8124eb646279e030febe5.svg?invert_in_darkmode" align=middle width=39.27514304999999pt height=27.6567522pt/>: Reactive power injection of DERs dispached by DisCo.
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;p,&space;q" title="\bg_white p, q" />: Nodal active and reactive power injection
 
@@ -249,7 +131,7 @@ $$ -->
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;L" title="\bg_white L" />: Set of load scenarios
 
-<img src="https://latex.codecogs.com/svg.image?\bg_white&space;K" title="\bg_white K" />: Set of DG types for HC calculation
+<img src="https://rawgit.com/felipemarkson/HCEstimator.jl/Fixes-bugs-related-to-Matpower/svgs/d6328eaebbcd5c358f426dbea4bdbf70.svg?invert_in_darkmode" align=middle width=15.13700594999999pt height=22.465723500000017pt/>: Set of operation scenario of DERs' Owner
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;S" title="\bg_white S" />: Set of scenarios of DG types for HC calculation
 
@@ -263,13 +145,21 @@ $$ -->
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;M" title="\bg_white M" />: A big number
 
-<img src="https://latex.codecogs.com/svg.image?\bg_white&space;\overline{P^{DG}},\overline{Q^{DG}}" title="\bg_white \overline{P^{DG}},\overline{Q^{DG}}" />: Active and reactive limit of DisCo's DG
+<img src="https://rawgit.com/felipemarkson/HCEstimator.jl/Fixes-bugs-related-to-Matpower/svgs/5de3395d9a962facf1228570f1570c3e.svg?invert_in_darkmode" align=middle width=96.65405474999999pt height=36.6389529pt/>: DisCO's upper limits of active and reactive power dispached by DERs.
+
+<img src="https://rawgit.com/felipemarkson/HCEstimator.jl/Fixes-bugs-related-to-Matpower/svgs/5b087afcef448f22d28d062ec207a5bf.svg?invert_in_darkmode" align=middle width=96.65405474999999pt height=30.063960299999987pt/>: DisCO's lower limits of active and reactive power dispached by DERs.
+
+<img src="https://rawgit.com/felipemarkson/HCEstimator.jl/Fixes-bugs-related-to-Matpower/svgs/8a57ec50a9fa4dfedfe3cc701d1153a9.svg?invert_in_darkmode" align=middle width=42.37443869999999pt height=27.6567522pt/>: DERs' power limit.
+
+<img src="https://rawgit.com/felipemarkson/HCEstimator.jl/Fixes-bugs-related-to-Matpower/svgs/fae5399046b45871e8d75acb5fda8054.svg?invert_in_darkmode" align=middle width=44.18382704999999pt height=27.6567522pt/>: DERs' owner power injection capacity.
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;\overline{P^{SB}},&space;\overline{Q^{SB}}" title="\bg_white \overline{P^{SB}}, \overline{Q^{SB}}" />: Active and reactive limit of the substation
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;\mu^L" title="\bg_white \mu^L" />: Load scenario multiplier
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;\mu^{HC}" title="\bg_white \mu^{HC}" />: Scenario multiplier for HC calculation
+
+<img src="https://rawgit.com/felipemarkson/HCEstimator.jl/Fixes-bugs-related-to-Matpower/svgs/777d440c6c333beeb18498c6d177104f.svg?invert_in_darkmode" align=middle width=41.25197999999999pt height=27.6567522pt/>: DERs' Owner Operation multiplier
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;N^B" title="\bg_white N^B" />: Quantity of buses without DGs
 
