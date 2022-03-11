@@ -86,7 +86,7 @@ $\text{max.        }$
 $$
 \text{Hosting Capacity}
 \begin{cases}
-\sum_{k \in K} N^B p^{HC}_k + \sum_{d \in D}  p^{HC}_{kd}
+N^B p^{HC}
 \end{cases}
 $$
 
@@ -97,24 +97,24 @@ $\text{s.t.        }$
 $$
 \begin{matrix}
 \text{Power injection}\\
-\text{in buses without DGs}
+\text{in buses without DERs}
 \end{matrix}
 \begin{cases}
-p_{blks} =  \mu^{HC}_{ks}p^{HC}_k - \mu^L_lP^L_ b\\ 
+p_{blks} =  \mu^{HC}_{s}p^{HC} - \mu^L_lP^L_ b\\ 
 q_{blks} = - \mu^L_lQ^L_ b\\
-\forall b \in \overline{\Omega}, \forall l \in L, \forall k \in K, \forall s \in S_k
+\forall b \in \overline{\Omega}, \forall l \in L, \forall s \in S
 \end{cases}
 $$
 
 $$
 \begin{matrix}
 \text{Power injection}\\
-\text{in buses with DGs}
+\text{in buses with DERs}
 \end{matrix}
 \begin{cases}
-p_{blks} =  \mu^{HC}_{ks}p^{HC}_{kd} + p^{DG}_{dlks} - \mu^L_lP^L_ b\\ 
-q_{blks} = q^{DG}_{dlks} - \mu^L_lQ^L_ b\\
-\forall d \in D, \forall b \in \{b_d\}, \forall l \in L, \forall k \in K, \forall s \in S_k
+p_{blks} = \mu^{DER}_kP^{DER}_{d} - \mu^L_lP^L_ b\\ 
+q_{blks} = q^{DER}_{dlk} - \mu^L_lQ^L_ b\\
+\forall d \in D, \forall b \in \{b_d\}, \forall l \in L,  \forall k \in K, \forall s \in S
 \end{cases}
 $$
 
@@ -129,7 +129,7 @@ p_{blks} = v^{\Re}_{blks}i^{\Re}_{blks} + v^{\Im}_{blks}i^{\Im}_{blks}\\
 q_{blks} = v^{\Im}_{blks}i^{\Re}_{blks} - v^{\Re}_{blks}i^{\Im}_{blks}\\
 i^{\Re}_{blks} = \sum_{j \in \Omega} G_{bj}v^{\Re}_{jlks} - B_{bj}v^{\Im}_{jlks}\\
 i^{\Im}_{blks} = \sum_{j \in \Omega} B_{bj}v^{\Re}_{jlks} + G_{bj}v^{\Im}_{jlks}\\
-\forall b \in \Omega, \forall l \in L, \forall k \in K ,\forall s \in S_k
+\forall b \in \Omega, \forall l \in L, \forall k \in K, \forall s \in S
 \end{cases}
 $$
 
@@ -138,7 +138,7 @@ $$
 \text{Voltage limits}
 \begin{cases}
 (\underline{V})^2\leq(v^{\Re}_{blks})^2 + (v^{\Im}_{blks})^2 \leq (\overline{V})^2\\
-\forall b \in \Omega, \forall l \in L, \forall k \in K ,\forall s \in S_k
+\forall b \in \Omega, \forall l \in L,\forall k \in K, \forall s \in S
 \end{cases}
 $$
 
@@ -152,27 +152,16 @@ v^{\Im}_{blks} = 0\\
 0 \leq p_{blks} \leq \overline{P^{SB}}\\
 0 \leq q_{blks} \leq \overline{Q^{SB}}\\
 (i^{\Re}_{blks})^2 + (i^{\Im}_{blks})^2 \geq 0\\
-\forall b \in \{b^{SB}\}, \forall l \in L, \forall k \in K ,\forall s \in S_k
+\forall b \in \{b^{SB}\}, \forall l \in L,\forall k \in K, \forall s \in S
 \end{cases}
 $$
 
 $$
-\begin{matrix}
-\text{Limit of power}\\
-\text{in buses with DG}
-\end{matrix}
+\text{DERs limits}
 \begin{cases}
-  p^{HC}_{kd} \leq p^{HC}_{k}\\
-  \forall k \in K ,\forall d \in D
-\end{cases}
-$$
-
-$$
-\text{DGs limits}
-\begin{cases}
-0\leq p^{DG}_{dlks} \leq \overline{P^{DG}_{d}}\\
-0\leq q^{DG}_{dlks} \leq \overline{Q^{DG}_{d}}\\
-\forall d \in D, \forall l \in L, \forall k \in K ,\forall s \in S_k
+\underline{Q}^{DER}_{d}\leq q^{DER}_{dlks} \leq \overline{Q}^{DER}_{d}\\
+(\mu^{DER}_k P^{DER}_{d})^2 + (q^{DER}_{dlks})^2 \leq S^{DER}_{d}\\
+\forall d \in D, \forall l \in L, \forall k \in K,\forall s \in S
 \end{cases}
 $$
 
@@ -184,7 +173,7 @@ $$\begin{matrix}
 \begin{cases}
 -M \leq p_{blks}, q_{blks}, i^{\Re}_{blks}, i^{\Im}_{blks}\leq M\\
 -\overline{V}\leq v^{\Re}_{blks}, v^{\Im}_{blks} \leq \overline{V}\\
-\forall b \in \Omega, \forall l \in L, \forall k \in K ,\forall s \in S_k
+\forall b \in \Omega, \forall l \in L, \forall k \in K,\forall s \in S
 \end{cases}
 $$
 
@@ -201,9 +190,9 @@ $$ -->
 
 ### Variables
 
-<img src="https://latex.codecogs.com/svg.image?\bg_white&space;p^{HC}" title="\bg_white p^{HC}" />: Active power injection to HC calculation
+$p^{HC}$: Active power injection to HC calculation
 
-<img src="https://latex.codecogs.com/svg.image?\bg_white&space;p^{DG},&space;q^{DG}" title="\bg_white p^{DG}, q^{DG}" />: Active and reactive power injection of DisCo's DG
+$q^{DER}$: Reactive power injection of DERs dispached by DisCo.
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;p,&space;q" title="\bg_white p, q" />: Nodal active and reactive power injection
 
@@ -220,7 +209,7 @@ $$ -->
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;L" title="\bg_white L" />: Set of load scenarios
 
-<img src="https://latex.codecogs.com/svg.image?\bg_white&space;K" title="\bg_white K" />: Set of DG types for HC calculation
+$K$: Set of operation scenario of DERs' Owner
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;S" title="\bg_white S" />: Set of scenarios of DG types for HC calculation
 
@@ -234,13 +223,21 @@ $$ -->
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;M" title="\bg_white M" />: A big number
 
-<img src="https://latex.codecogs.com/svg.image?\bg_white&space;\overline{P^{DG}},\overline{Q^{DG}}" title="\bg_white \overline{P^{DG}},\overline{Q^{DG}}" />: Active and reactive limit of DisCo's DG
+$\overline{P}^{DER}, \overline{Q}^{DER}$: DisCO's upper limits of active and reactive power dispached by DERs.
+
+$\underline{P}^{DER}, \underline{Q}^{DER}$: DisCO's lower limits of active and reactive power dispached by DERs.
+
+$S^{DER}$: DERs' power limit.
+
+$P^{DER}$: DERs' owner power injection capacity.
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;\overline{P^{SB}},&space;\overline{Q^{SB}}" title="\bg_white \overline{P^{SB}}, \overline{Q^{SB}}" />: Active and reactive limit of the substation
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;\mu^L" title="\bg_white \mu^L" />: Load scenario multiplier
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;\mu^{HC}" title="\bg_white \mu^{HC}" />: Scenario multiplier for HC calculation
+
+$\mu^{DER}$: DERs' Owner Operation multiplier
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;N^B" title="\bg_white N^B" />: Quantity of buses without DGs
 
