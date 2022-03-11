@@ -120,21 +120,6 @@ $$
 
 $$
 \begin{matrix}
-\text{Current}\\
-\text{injection balance}
-\end{matrix}
-\begin{cases}
-\sum_{b \in \Omega}
-i^{\Re}_{blks} = 0 
-\\
-\sum_{b \in \Omega}
-i^{\Im}_{blks} = 0 \\
-\forall l \in L, \forall k \in K, \forall s \in S_k
-\end{cases}
-$$
-
-$$
-\begin{matrix}
 \text{Power, voltage }\\
 \text{and current}\\
 \text{relationship}
