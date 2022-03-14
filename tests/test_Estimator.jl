@@ -70,9 +70,13 @@ end
 function runtests()
 
     @testset "Estimator" begin
-        sot = Model()
-        test_add_variables(sot, sys)
-
+        for case in [case3_dist, case33]
+            sot = Model()
+            sys, name = case()
+            @testset "$name" begin
+                test_add_variables(sot, sys)
+            end
+        end
     end
 end
 
