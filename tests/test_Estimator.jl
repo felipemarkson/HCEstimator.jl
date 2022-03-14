@@ -10,6 +10,8 @@ include("../src/SimplePF.jl")
 import .SimplePF
 export runtests
 
+include("../src/Estimator.jl")
+import .Estimator
 
 function case3_dist()
     VN = 12500
