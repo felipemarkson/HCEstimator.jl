@@ -15,6 +15,16 @@ struct DG
     Cost
 end
 
+struct DER
+    bus::Any
+    S_limit::Float64
+    alpha::Float64
+    P_limit::Vector{Float64}
+    Q_limit::Vector{Float64}
+    scenario::Vector{Float64}
+    Cost::Vector{Float64}
+end
+
 struct Substation
     nominal_voltage
     bus
