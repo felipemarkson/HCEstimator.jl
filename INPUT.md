@@ -102,7 +102,7 @@ $$
 \begin{cases}
 p_{blks} =  \mu^{HC}_{s}p^{HC} - \mu^L_lP^L_ b\\ 
 q_{blks} = - \mu^L_lQ^L_ b\\
-\forall b \in \overline{\Omega}, \forall l \in L, \forall s \in S
+\forall b \in \overline{\Omega}, \forall l \in L, \forall d \in D, \forall k \in K,\forall s \in S
 \end{cases}
 $$
 
@@ -112,7 +112,7 @@ $$
 \text{in buses with DERs}
 \end{matrix}
 \begin{cases}
-p_{blks} = \mu^{DER}_kP^{DER}_{d} - \mu^L_lP^L_ b\\ 
+p_{blks} = \mu^{DER}_{dk}P^{DER}_{d} + p^{DER}_{dlks} - \mu^L_lP^L_ b\\ 
 q_{blks} = q^{DER}_{dlk} - \mu^L_lQ^L_ b\\
 \forall d \in D, \forall b \in \{b_d\}, \forall l \in L,  \forall k \in K, \forall s \in S
 \end{cases}
@@ -159,8 +159,10 @@ $$
 $$
 \text{DERs limits}
 \begin{cases}
+\underline{P}^{DER}_{d}\leq p^{DER}_{dlks} \leq \overline{P}^{DER}_d\\
 \underline{Q}^{DER}_{d}\leq q^{DER}_{dlks} \leq \overline{Q}^{DER}_{d}\\
-(\mu^{DER}_k P^{DER}_{d})^2 + (q^{DER}_{dlks})^2 \leq S^{DER}_{d}\\
+(p^{DER}_{dlks})^2 + (q^{DER}_{dlks})^2 \leq (\alpha_d^{DER} S^{DER}_{d})^2\\
+(\mu^{DER}_{dk} P^{DER}_{d} + p^{DER}_{dlks})^2 + (q^{DER}_{dlks})^2 \leq (S^{DER}_{d})^2\\
 \forall d \in D, \forall l \in L, \forall k \in K,\forall s \in S
 \end{cases}
 $$
@@ -173,7 +175,7 @@ $$\begin{matrix}
 \begin{cases}
 -M \leq p_{blks}, q_{blks}, i^{\Re}_{blks}, i^{\Im}_{blks}\leq M\\
 -\overline{V}\leq v^{\Re}_{blks}, v^{\Im}_{blks} \leq \overline{V}\\
-\forall b \in \Omega, \forall l \in L, \forall k \in K,\forall s \in S
+\forall b \in \Omega, \forall l \in L,\forall k \in K,\forall s \in S
 \end{cases}
 $$
 
@@ -191,6 +193,8 @@ $$ -->
 ### Variables
 
 $p^{HC}$: Active power injection to HC calculation
+
+$p^{DER}$: Active power injection of DERs dispached by DisCo.
 
 $q^{DER}$: Reactive power injection of DERs dispached by DisCo.
 
@@ -223,13 +227,15 @@ $K$: Set of operation scenario of DERs' Owner
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;M" title="\bg_white M" />: A big number
 
-$\overline{P}^{DER}, \overline{Q}^{DER}$: DisCO's upper limits of active and reactive power dispached by DERs.
+$\overline{P}^{DER}, \overline{Q}^{DER}$: Upper limits of active and reactive power that can be dispached by DERs.
 
-$\underline{P}^{DER}, \underline{Q}^{DER}$: DisCO's lower limits of active and reactive power dispached by DERs.
+$\underline{P}^{DER}, \underline{Q}^{DER}$: Lower limits of active and reactive power that can be dispached by DERs.
 
 $S^{DER}$: DERs' power limit.
 
-$P^{DER}$: DERs' owner power injection capacity.
+$\alpha^{DER}$: Proportion of DERs' power limit that can be dispached by DisCo.
+
+$P^{DER}$: DERs' owner power injection capacity. $P^{DER} = (1 - \alpha^{DER})S^{DER}$
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;\overline{P^{SB}},&space;\overline{Q^{SB}}" title="\bg_white \overline{P^{SB}}, \overline{Q^{SB}}" />: Active and reactive limit of the substation
 
@@ -237,7 +243,7 @@ $P^{DER}$: DERs' owner power injection capacity.
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;\mu^{HC}" title="\bg_white \mu^{HC}" />: Scenario multiplier for HC calculation
 
-$\mu^{DER}$: DERs' Owner Operation multiplier
+$\mu^{DER}$: DERs' Owner Operation scenario
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;N^B" title="\bg_white N^B" />: Quantity of buses without DGs
 
