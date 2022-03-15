@@ -63,9 +63,17 @@ function case33()
     return sys, "case33"
 end
 
+function test_build_DER_set_buses(sys)
+    recived = Estimator.build_DER_set_buses(sys)
+    println([dg.bus for dg in sys.dgs])
+    @test recived == [dg.bus for dg in sys.dgs]
+
+end
+
 function test_build_sets(sys)
     Ω = sys.buses
-    bΩ = filter(bus -> bus != sys.substation.bus, Ω)
+    sub_der = [Estimator.build_DER_set_buses(sys); sys.substation.bus]
+    bΩ = filter(bus -> bus ∉ sub_der, Ω)
     L = collect(1:length(sys.m_load))
     D = collect(1:length(sys.dgs))
     K = collect(1:reduce(*, length(der.scenario) for der in sys.dgs))

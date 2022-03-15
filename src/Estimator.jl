@@ -4,13 +4,18 @@ import .SimplePF
 using JuMP
 
 function build_sets(sys)
+    sub_der = [Estimator.build_DER_set_buses(sys); sys.substation.bus]
     Ω = sys.buses
-    bΩ = filter(bus -> bus != sys.substation.bus, Ω)
+    bΩ = filter(bus -> bus ∉ sub_der, Ω)
     L = collect(1:length(sys.m_load))
     K = collect(1:reduce(*, length(der.scenario) for der in sys.dgs))
     D = collect(1:length(sys.dgs))
     S = collect(1:length(sys.m_new_dg))
     return (Ω, bΩ, L, K, D, S)
+end
+
+function build_DER_set_buses(sys)
+    return [dg.bus for dg in sys.dgs]
 end
 
 function add_variables(model, sys)
