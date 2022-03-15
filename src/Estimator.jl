@@ -85,4 +85,31 @@ function add_S_VI_relationship(model, sys)
     return model
 end
 
+function add_substation_constraint(model, sys)
+    (Ω, bΩ, L, K, D, S) = Estimator.build_sets(sys)
+    V = model[:V]
+    I = model[:I]
+    P = model[:P]
+    Q = model[:Q]
+    sub = sys.substation
+    for l = L, k = K, s = S
+        fix(V[:Re, sub.bus, l, k, s], sub.voltage, force = true)
+        fix(V[:Im, sub.bus, l, k, s], 0.0, force = true)
+    end
+
+    @constraint(model, sub_plimit[l = L, k = K, s = S],
+        0 <= P[sub.bus, l, k, s] <= sub.P_limit
+    )
+    @constraint(model, sub_qlimit[l = L, k = K, s = S],
+        0 <= Q[sub.bus, l, k, s] <= sub.Q_limit
+    )
+
+    @constraint(model, sub_current[l = L, k = K, s = S],
+        I[:Re, sub.bus, l, k, s]^2 + I[:Im, sub.bus, l, k, s]^2 >= 0.0
+    )
+
+
+    return model
+end
+
 end
