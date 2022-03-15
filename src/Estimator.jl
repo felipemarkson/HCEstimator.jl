@@ -29,4 +29,23 @@ function add_variables(model, sys)
     return model
 end
 
+function add_voltage_constraints(model, sys)
+    (Ω, bΩ, L, K, D, S) = Estimator.build_sets(sys)
+    V = model[:V]
+
+    @expression(model, V²[b = Ω, l = L, k = K, s = S],
+        V[:Re, b, l, k, s]^2 + V[:Im, b, l, k, s]^2
+    )
+
+    @constraint(model, voltage_constraint[b = Ω, l = L, k = K, s = S],
+        sys.VL^2 <= V²[b, l, k, s] <= sys.VH^2
+    )
+
+    @NLexpression(model, V_module[b = Ω, l = L, k = K, s = S],
+        sqrt(V²[b, l, k, s])
+    )
+
+    return model
+end
+
 end

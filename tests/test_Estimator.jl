@@ -154,6 +154,35 @@ function test_add_variables(sot, sys)
     return sot
 end
 
+function test_add_voltage_constraints(sot, sys)
+    (Ω, bΩ, L, K, D, S) = Estimator.build_sets(sys)
+
+    sot = Estimator.add_voltage_constraints(sot, sys)
+    @test sot isa Model
+
+    V = sot[:V]
+    V² = sot[:V²]
+    V_module = sot[:V_module]
+    voltage_constraint = sot[:voltage_constraint]
+
+
+
+    for b = Ω, l = L, k = K, s = S
+        @testset "V²" begin
+            @test V²[b, l, k, s] isa QuadExpr
+            @test V²[b, l, k, s] == V[:Re, b, l, k, s]^2 + V[:Im, b, l, k, s]^2
+        end
+        @testset "voltage_constraint" begin
+            obj = constraint_object(voltage_constraint[b, l, k, s])
+            @test isequal_canonical(obj.func, V²[b, l, k, s])
+            @test obj.set == MOI.Interval(sys.VL^2, sys.VH^2)
+        end
+    end
+    return sot
+
+    return sot
+end
+
 
 function runtests()
 
@@ -164,6 +193,7 @@ function runtests()
                 test_build_sets(sys)
                 sot = Model()
                 sot = test_add_variables(sot, sys)
+                sot = test_add_voltage_constraints(sot, sys)
             end
         end
     end
