@@ -48,4 +48,26 @@ function add_voltage_constraints(model, sys)
     return model
 end
 
+function add_I_V_relationship(model, sys)
+    (Ω, bΩ, L, K, D, S) = Estimator.build_sets(sys)
+    G = real(sys.Y)
+    B = imag(sys.Y)
+    V = model[:V]
+    @expression(model, I[z = [:Re, :Im], i = Ω, l = L, k = K, s = S],
+        if z == :Re
+            sum(
+                G[i, j] * V[:Re, j, l, k, s] - B[i, j] * V[:Im, j, l, k, s]
+                for j in Ω
+            )
+        elseif z == :Im
+            sum(
+                B[i, j] * V[:Re, j, l, k, s] + G[i, j] * V[:Im, j, l, k, s]
+                for j in Ω
+            )
+        end
+    )
+
+    return model
+end
+
 end

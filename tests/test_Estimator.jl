@@ -170,7 +170,7 @@ function test_add_voltage_constraints(sot, sys)
 
     voltage_constraint = sot[:voltage_constraint] #How to test it?
 
-    
+
     for b = Ω, l = L, k = K, s = S
         @test V²[b, l, k, s] == V[:Re, b, l, k, s]^2 + V[:Im, b, l, k, s]^2
         obj = constraint_object(voltage_constraint[b, l, k, s])
@@ -180,6 +180,28 @@ function test_add_voltage_constraints(sot, sys)
     end
     return sot
 end
+
+function test_add_I_V_relationship(sot, sys)
+    (Ω, bΩ, L, K, D, S) = Estimator.build_sets(sys)
+    G = real(sys.Y)
+    B = imag(sys.Y)
+    V = sot[:V]
+
+    sot = Estimator.add_I_V_relationship(sot, sys)
+    @test sot isa Model
+    @test sot[:I] isa JuMP.Containers.DenseAxisArray{JuMP.AffExpr,5}
+    I = sot[:I]
+
+    for i = Ω, l = L, k = K, s = S
+        @test I[:Re, i, l, k, s] == sum(
+            G[i, j] * V[:Re, j, l, k, s] - B[i, j] * V[:Im, j, l, k, s]
+            for j = Ω)
+
+        @test I[:Im, i, l, k, s] == sum(
+            B[i, j] * V[:Re, j, l, k, s] + G[i, j] * V[:Im, j, l, k, s]
+            for j = Ω)
+    end
+
     return sot
 end
 
@@ -194,6 +216,7 @@ function runtests()
                 sot = Model()
                 sot = test_add_variables(sot, sys)
                 sot = test_add_voltage_constraints(sot, sys)
+                sot = test_add_I_V_relationship(sot, sys)
             end
         end
     end
