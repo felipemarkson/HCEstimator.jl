@@ -161,23 +161,25 @@ function test_add_voltage_constraints(sot, sys)
     @test sot isa Model
 
     V = sot[:V]
+
+    @test sot[:V²] isa JuMP.Containers.DenseAxisArray{JuMP.QuadExpr,4}
     V² = sot[:V²]
+
+    @test sot[:V_module] isa JuMP.Containers.DenseAxisArray{JuMP.NonlinearExpression,4}
     V_module = sot[:V_module]
-    voltage_constraint = sot[:voltage_constraint]
 
+    voltage_constraint = sot[:voltage_constraint] #How to test it?
 
-
+    
     for b = Ω, l = L, k = K, s = S
-        @testset "V²" begin
-            @test V²[b, l, k, s] isa QuadExpr
-            @test V²[b, l, k, s] == V[:Re, b, l, k, s]^2 + V[:Im, b, l, k, s]^2
-        end
-        @testset "voltage_constraint" begin
-            obj = constraint_object(voltage_constraint[b, l, k, s])
-            @test isequal_canonical(obj.func, V²[b, l, k, s])
-            @test obj.set == MOI.Interval(sys.VL^2, sys.VH^2)
-        end
+        @test V²[b, l, k, s] == V[:Re, b, l, k, s]^2 + V[:Im, b, l, k, s]^2
+        obj = constraint_object(voltage_constraint[b, l, k, s])
+        @test isequal_canonical(obj.func, V²[b, l, k, s])
+        @test obj.set == MOI.Interval(sys.VL^2, sys.VH^2)
+
     end
+    return sot
+end
     return sot
 end
 
