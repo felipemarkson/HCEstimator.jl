@@ -179,8 +179,6 @@ function test_add_voltage_constraints(sot, sys)
         end
     end
     return sot
-
-    return sot
 end
 
 
