@@ -215,7 +215,7 @@ $q^{DER}$: Reactive power injection of DERs dispached by DisCo.
 
 $K$: Set of operation scenario of DERs' Owner
 
-<img src="https://latex.codecogs.com/svg.image?\bg_white&space;S" title="\bg_white S" />: Set of scenarios of DG types for HC calculation
+<img src="https://latex.codecogs.com/svg.image?\bg_white&space;S" title="\bg_white S" />: Set of scenarios for HC calculation
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;D" title="\bg_white D" />: Set of DisCo's DGs
 
