@@ -85,6 +85,24 @@ function add_S_VI_relationship(model, sys)
     return model
 end
 
+function add_active_losses(model, sys)
+    (Ω, bΩ, L, K, D, S) = Estimator.build_sets(sys)
+    P = model[:P]
+    @expression(model, Ploss[l = L, k = K, s = S],
+        sum(P[b, l, k, s] for b = Ω)
+    )
+    return model
+end
+
+function add_reactive_losses(model, sys)
+    (Ω, bΩ, L, K, D, S) = Estimator.build_sets(sys)
+    Q = model[:Q]
+    @expression(model, Qloss[l = L, k = K, s = S],
+        sum(Q[b, l, k, s] for b = Ω)
+    )
+    return model
+end
+
 function add_substation_constraint(model, sys)
     (Ω, bΩ, L, K, D, S) = Estimator.build_sets(sys)
     V = model[:V]
