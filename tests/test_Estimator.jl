@@ -89,8 +89,8 @@ function test_add_variables(sot, sys)
     n_bus = length(Ω)
 
     n_volts = 2 * n_bus * n_L * n_K * n_S
-    n_p_der = n_D*n_L * n_K * n_S
-    n_q_der = n_D*n_L * n_K * n_S
+    n_p_der = n_D * n_L * n_K * n_S
+    n_q_der = n_D * n_L * n_K * n_S
     n_p_hc = 1
 
     n_var = n_volts + n_p_der + n_q_der + n_p_hc
@@ -104,7 +104,7 @@ function test_add_variables(sot, sys)
         pᴴᶜ = sot[:pᴴᶜ]
         @test num_variables(sot) == n_var
 
-        @testset "V[$b, $l, $k, $s]" for b = Ω, l = L, d = D, k = K[d], s = S
+        @testset "V[$b, $l, $k, $s]" for b = Ω, l = L, k = K, s = S
             @testset "Start values" begin
                 @test start_value(V[:Re, b, l, k, s]) == 1.0
                 @test start_value(V[:Im, b, l, k, s]) == 0.0
@@ -130,7 +130,7 @@ function test_add_variables(sot, sys)
             end
         end
 
-        @testset "qᴰᴱᴿ[$d, $l, $k, $s]" for d = D, l = L, k = K[d], s = S
+        @testset "qᴰᴱᴿ[$d, $l, $k, $s]" for d = D, l = L, k = K, s = S
             @testset "Start values" begin
                 @test start_value(qᴰᴱᴿ[d, l, k, s]) == 0.0
             end
