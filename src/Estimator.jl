@@ -70,4 +70,19 @@ function add_I_V_relationship(model, sys)
     return model
 end
 
+function add_S_VI_relationship(model, sys)
+    (Ω, bΩ, L, K, D, S) = Estimator.build_sets(sys)
+    V = model[:V]
+    I = model[:I]
+
+    @expression(model, P[b = Ω, l = L, k = K, s = S],
+        SimplePF.mc_re(V[:Re, b, l, k, s], V[:Im, b, l, k, s], I[:Re, b, l, k, s], -I[:Im, b, l, k, s])
+    )
+    @expression(model, Q[b = Ω, l = L, k = K, s = S],
+        SimplePF.mc_im(V[:Re, b, l, k, s], V[:Im, b, l, k, s], I[:Re, b, l, k, s], -I[:Im, b, l, k, s])
+    )
+
+    return model
+end
+
 end

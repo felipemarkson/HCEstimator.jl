@@ -205,6 +205,27 @@ function test_add_I_V_relationship(sot, sys)
     return sot
 end
 
+function test_add_S_VI_relationship(sot, sys)
+    (Ω, bΩ, L, K, D, S) = Estimator.build_sets(sys)
+
+    sot = Estimator.add_S_VI_relationship(sot, sys)
+    V = sot[:V]
+    I = sot[:I]
+
+    @test sot[:P] isa JuMP.Containers.DenseAxisArray{JuMP.QuadExpr,4}
+    @test sot[:Q] isa JuMP.Containers.DenseAxisArray{JuMP.QuadExpr,4}
+    P = sot[:P]
+    Q = sot[:Q]
+
+    for b = Ω, l = L, k = K, s = S
+        @test P[b, l, k, s] == SimplePF.mc_re(V[:Re, b, l, k, s], V[:Im, b, l, k, s], I[:Re, b, l, k, s], -I[:Im, b, l, k, s])
+
+        @test Q[b, l, k, s] == SimplePF.mc_im(V[:Re, b, l, k, s], V[:Im, b, l, k, s], I[:Re, b, l, k, s], -I[:Im, b, l, k, s])
+    end
+
+    return sot
+end
+
 
 function runtests()
 
@@ -217,6 +238,7 @@ function runtests()
                 sot = test_add_variables(sot, sys)
                 sot = test_add_voltage_constraints(sot, sys)
                 sot = test_add_I_V_relationship(sot, sys)
+                sot = test_add_S_VI_relationship(sot, sys)
             end
         end
     end
