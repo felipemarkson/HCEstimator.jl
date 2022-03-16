@@ -72,14 +72,14 @@ function test_build_DER_set_buses(sys)
 end
 
 function test_build_DER_scenario(sys, name)
-    if name =="case3_dist"
+    if name == "case3_dist"
         scenario = [
             [1, 1], [1, 2], [1, 3], [2, 1], [2, 2], [2, 3],
         ]
         func = Estimator.build_DER_scenario(sys)
         for (k, K) in enumerate(scenario)
             for (d, expected) in enumerate(K)
-                @test func(k,d) == sys.dgs[d].scenario[expected]
+                @test func(k, d) == sys.dgs[d].scenario[expected]
             end
         end
 
@@ -337,12 +337,12 @@ function test_add_power_injection_definition(sot, sys)
         μᴰᴱᴿ = Estimator.build_DER_scenario(sys)
         @testset "With DER" for d = D, l = L, k = K, s = S
             b = B[d]
-            Pᴰᴱᴿ = (1.0 - sys.dgs[d].alpha) * sys.dgs[d].S_limit            
+            Pᴰᴱᴿ = (1.0 - sys.dgs[d].alpha) * sys.dgs[d].S_limit
             μᴸ = sys.m_load[l]
             @testset "Active" begin
                 obj = constraint_object(p_wder[d, l, k, s])
                 @test isequal_canonical(obj.func, P[b, l, k, s] - pᴰᴱᴿ[d, l, k, s])
-                @test obj.set == MOI.EqualTo(-μᴸ * PL[b] + Pᴰᴱᴿ * μᴰᴱᴿ(k,d))
+                @test obj.set == MOI.EqualTo(-μᴸ * PL[b] + Pᴰᴱᴿ * μᴰᴱᴿ(k, d))
             end
             @testset "Reactive" begin
                 obj = constraint_object(q_wder[d, l, k, s])
@@ -354,6 +354,49 @@ function test_add_power_injection_definition(sot, sys)
 
     return sot
 end
+
+
+function test_add_ders_limits(sot, sys)
+    #P and Q limits was alredy tests in test_add_variables
+    (Ω, bΩ, L, K, D, S) = Estimator.build_sets(sys)
+    sot = Estimator.add_ders_limits(sot, sys)
+    pᴰᴱᴿ = sot[:pᴰᴱᴿ]
+    qᴰᴱᴿ = sot[:qᴰᴱᴿ]
+    disco_der_limit = sot[:disco_der_limit]
+    μᴰᴱᴿ = Estimator.build_DER_scenario(sys)
+    @testset "disco_der_limit" for d = D, l = L, k = K, s = S
+        obj = constraint_object(disco_der_limit[d, l, k, s])
+        @test isequal_canonical(obj.func, pᴰᴱᴿ[d, l, k, s]^2 + qᴰᴱᴿ[d, l, k, s]^2)
+        @test obj.set == MOI.LessThan((sys.dgs[d].alpha * sys.dgs[d].S_limit)^2)
+    end
+
+    der_limit = sot[:der_limit]
+
+    @testset "der_limit" for d = D, l = L, k = K, s = S
+        Pᴰᴱᴿ = (1.0 - sys.dgs[d].alpha) * sys.dgs[d].S_limit
+        obj = constraint_object(der_limit[d, l, k, s])
+        canonical = pᴰᴱᴿ[d, l, k, s]^2 + qᴰᴱᴿ[d, l, k, s]^2 + 2 * Pᴰᴱᴿ * μᴰᴱᴿ(k, d) * pᴰᴱᴿ[d, l, k, s]
+        @test isequal_canonical(obj.func, canonical)
+        left = (sys.dgs[d].S_limit)^2 - (Pᴰᴱᴿ * μᴰᴱᴿ(k, d))^2
+        @test obj.set == MOI.LessThan(left)
+    end
+
+
+    return sot
+end
+
+
+function test_nl_pf(sot, sys, case)
+
+    other_sys, _ = case()
+    model = Estimator.nl_pf(Model(), other_sys)
+    @testset "nl_pf" begin
+        #Find a better way to test it 
+        @test sprint(print, sot) == sprint(print, model)
+    end
+    return sot
+end
+
 
 
 function runtests()
@@ -371,6 +414,8 @@ function runtests()
                 sot = test_add_S_VI_relationship(sot, sys)
                 sot = test_add_substation_constraint(sot, sys)
                 sot = test_add_power_injection_definition(sot, sys)
+                sot = test_add_ders_limits(sot, sys)
+                sot = test_nl_pf(sot, sys, case)
             end
         end
     end

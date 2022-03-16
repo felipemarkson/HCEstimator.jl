@@ -24,7 +24,7 @@ function build_DER_scenario(sys)
     μᴰᴱᴿ(k::Int, d::Int) = begin
         k_n = k - 1 # To turn value 0 as a frist index        
         for (indx, qnt_scenario) in enumerate(qnt_scenarios)
-            values[indx] =(k_n % qnt_scenario) + 1 # To back to value 1 as a first index
+            values[indx] = (k_n % qnt_scenario) + 1 # To back to value 1 as a first index
             k_n = div(k_n, qnt_scenario)
         end
         indx = reverse(values)[d]
@@ -165,15 +165,50 @@ function add_power_injection_definition(model, sys)
     @constraint(model, q[b = bΩ, l = L, k = K, s = S],
         Q[b, l, k, s] == -μᴸ[l] * QL[b])
 
-
-    Pᴰᴱᴿ(d) = (1.0 - sys.dgs[d].alpha) * sys.dgs[d].S_limit
+    αᴰᴱᴿ(d) = sys.dgs[d].alpha
+    Sᴰᴱᴿ(d) = sys.dgs[d].S_limit
+    Pᴰᴱᴿ(d) = (1.0 - αᴰᴱᴿ(d)) * Sᴰᴱᴿ(d)
     pᴰᴱᴿ = model[:pᴰᴱᴿ]
     qᴰᴱᴿ = model[:qᴰᴱᴿ]
     μᴰᴱᴿ = build_DER_scenario(sys)
     @constraint(model, p_wder[d = D, l = L, k = K, s = S],
-        P[B[d], l, k, s] == μᴰᴱᴿ(k,d) * Pᴰᴱᴿ(d) + pᴰᴱᴿ[d, l, k, s] - μᴸ[l] * PL[B[d]])
+        P[B[d], l, k, s] == μᴰᴱᴿ(k, d) * Pᴰᴱᴿ(d) + pᴰᴱᴿ[d, l, k, s] - μᴸ[l] * PL[B[d]])
     @constraint(model, q_wder[d = D, l = L, k = K, s = S],
         Q[B[d], l, k, s] == qᴰᴱᴿ[d, l, k, s] - μᴸ[l] * QL[B[d]])
+
+    return model
+end
+
+function add_ders_limits(model, sys)
+    (Ω, bΩ, L, K, D, S) = Estimator.build_sets(sys)
+
+    αᴰᴱᴿ(d) = sys.dgs[d].alpha
+    Sᴰᴱᴿ(d) = sys.dgs[d].S_limit
+    Pᴰᴱᴿ(d) = (1.0 - αᴰᴱᴿ(d)) * Sᴰᴱᴿ(d)
+    μᴰᴱᴿ = build_DER_scenario(sys)
+    pᴰᴱᴿ = model[:pᴰᴱᴿ]
+    qᴰᴱᴿ = model[:qᴰᴱᴿ]
+    @constraint(model, disco_der_limit[d = D, l = L, k = K, s = S],
+        pᴰᴱᴿ[d, l, k, s]^2 + qᴰᴱᴿ[d, l, k, s]^2 ≤ (αᴰᴱᴿ(d) * Sᴰᴱᴿ(d))^2
+    )
+
+    @constraint(model, der_limit[d = D, l = L, k = K, s = S],
+        (μᴰᴱᴿ(k, d) * Pᴰᴱᴿ(d) + pᴰᴱᴿ[d, l, k, s])^2 + qᴰᴱᴿ[d, l, k, s]^2 ≤ Sᴰᴱᴿ(d)^2
+    )
+
+
+    return model
+end
+
+function nl_pf(model, sys)
+
+    model = add_variables(model, sys)
+    model = add_voltage_constraints(model, sys)
+    model = add_I_V_relationship(model, sys)
+    model = add_S_VI_relationship(model, sys)
+    model = add_substation_constraint(model, sys)
+    model = add_power_injection_definition(model, sys)
+    model = add_ders_limits(model, sys)
 
     return model
 end
