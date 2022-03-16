@@ -50,38 +50,45 @@ function sets(sys)
 end
 
 function voltage_module(model, b, l, k, s)
-    return value.(model[:V_module])[b, l, k, s]
+    return value(model[:V_module][b, l, k, s])
 end
 
 function voltage(model, b, l, k, s)
-    Vre = value.(model[:V])[:Re, b, l, k, s]
-    Vim = value.(model[:V])[:Im, b, l, k, s]
+    Vre = value(model[:V][:Re, b, l, k, s])
+    Vim = value(model[:V][:Im, b, l, k, s])
     return Vre + 1im * Vim
 end
 
 function current(model, b, l, k, s)
-    Ire = value.(model[:I])[:Re, b, l, k, s]
-    Iim = value.(model[:I])[:Im, b, l, k, s]
+    Ire = value(model[:I][:Re, b, l, k, s])
+    Iim = value(model[:I][:Im, b, l, k, s])
     return Ire + 1im * Iim
 end
 
-function power(model, b, l, k, s)
-    P = value.(model[:P])[b, l, k, s]
-    Q = value.(model[:Q])[b, l, k, s]
-    return P + 1im * Q
+function power_active(model, b, l, k, s)
+    return value(model[:P][b, l, k, s])
 end
 
-function power_DER(model, d, l, k, s)
-    pᴰᴱᴿ = value.(model[:pᴰᴱᴿ])[d, l, k, s]
-    qᴰᴱᴿ = value.(model[:qᴰᴱᴿ])[d, l, k, s]
-    return pᴰᴱᴿ + 1im * qᴰᴱᴿ
+function power_reactive(model, b, l, k, s)
+    return value(model[:Q][b, l, k, s])
 end
 
-function losses(model, l, k, s)
-    Ploss = value.(model[:Ploss])[l, k, s]
-    Qloss = value.(model[:Qloss])[l, k, s]
-    return Ploss + 1im * Qloss
+function power_active_DER(model, d, l, k, s)
+    return value(model[:pᴰᴱᴿ][d, l, k, s])
 end
+
+function power_reactive_DER(model, d, l, k, s)
+    return value(model[:qᴰᴱᴿ][d, l, k, s])
+end
+
+function active_losses(model, l, k, s)
+    return value(model[:Ploss][l, k, s])
+end
+
+function reactive_losses(model, l, k, s)
+    return value(model[:Qloss][l, k, s])
+end
+
 end
 
 end
