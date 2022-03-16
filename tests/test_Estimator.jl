@@ -30,7 +30,8 @@ function case3_dist()
     sys = DistSystem.factory_system(data, VL, VH, sub)
 
     sys.dgs = [
-        DistSystem.DER(3, 0.02, 0.05, [0.0, 0.03], [-0.03, 0.03], [0.0, 1.0], [0.0026, 10.26, 210]), #DG dispatchable
+        DistSystem.DER(3, 0.001, 0.05, [0.0, 0.03], [-0.03, 0.03], [0.0, 1.0], [0.0026, 10.26, 210]), #DG dispatchable
+        DistSystem.DER(2, 0.002, 0.05, [0.0, 0.03], [-0.03, 0.03], [-1.0, 0.0, 1.0], [0.0026, 10.26, 210]), #DG dispatchable
     ]
     sys.m_load = [0.5, 0.8, 1.0]
     sys.m_new_dg = [-1.0, 0.0, 1]
