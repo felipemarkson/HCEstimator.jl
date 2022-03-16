@@ -3,6 +3,8 @@ include("SimplePF.jl")
 import .SimplePF
 using JuMP
 
+export nl_pf, add_objective
+
 function build_sets(sys)
     sub_der = [Estimator.build_DER_set_buses(sys); sys.substation.bus]
     Ω = sys.buses
@@ -209,6 +211,15 @@ function nl_pf(model, sys)
     model = add_substation_constraint(model, sys)
     model = add_power_injection_definition(model, sys)
     model = add_ders_limits(model, sys)
+
+    return model
+end
+
+function add_objective(model, sys)
+    (Ω, bΩ, L, K, D, S) = Estimator.build_sets(sys)
+    Nᴮ = length(bΩ)
+    pᴴᶜ = model[:pᴴᶜ]
+    set_objective(model, MIN_SENSE, pᴴᶜ * Nᴮ)
 
     return model
 end

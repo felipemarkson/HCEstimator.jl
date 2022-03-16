@@ -414,7 +414,17 @@ function test_model_should_be_feasible!(sot, sys, name)
         end
     end
     return sot
+end
 
+function test_objective(sot, sys)
+    (Ω, bΩ, L, K, D, S) = Estimator.build_sets(sys)
+    sot = Estimator.add_objective(sot, sys)
+    Nᴮ = length(bΩ)
+    pᴴᶜ = sot[:pᴴᶜ]
+    @test MIN_SENSE == @inferred objective_sense(sot)
+    @test objective_function_type(sot) == JuMP.AffExpr
+    @test isequal_canonical(objective_function(sot), Nᴮ * pᴴᶜ)
+    return sot
 end
 
 
@@ -437,6 +447,7 @@ function runtests()
                 sot = test_add_ders_limits(sot, sys)
                 sot = test_nl_pf(sot, sys, case)
                 sot = test_model_should_be_feasible!(sot, sys, name)
+                sot = test_objective(sot, sys)
             end
         end
     end
