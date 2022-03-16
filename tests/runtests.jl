@@ -9,6 +9,11 @@ function runtests()
     include("test_Estimator.jl")
     include("test_HCEstimator.jl")
 
+    @testset "example" begin
+        include("../example/example.jl")
+        @test true
+    end
+
 end
 end
 
