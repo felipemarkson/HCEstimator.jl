@@ -24,7 +24,7 @@ der1 = DistSystem.DER(
     [-0.03, 0.03],       # [Qᴰᴱᴿ_low, Qᴰᴱᴿ_upper]  (MVAr)
     [0.0, 1.0],          # Operation Scenarios
     [0.0026, 10.26, 210] # Costs (Not used) 
-    ) #DG dispatchable
+) #DG dispatchable
 sys.dgs = [
     der1,
     DistSystem.DER(22, 0.02, 0.05, [0.0, 0.0], [-0.03, 0.03], [0.0, 1.0], [0.0026, 10.26, 210]), #DG non-active dispatchable
@@ -37,4 +37,17 @@ sys.m_new_dg = [-1.0, 0.0, 1]
 model = build_model(Model(Ipopt.Optimizer), sys)
 
 optimize!(model)
-println("Hosting Capacity: ", objective_value(model), "MVA")
+println("Hosting Capacity: ", round(objective_value(model), digits=3), " MVA")
+
+## The code bellow takes several minutes to finished
+
+# (Ω, bΩ, L, K, D, S) = Tools.Get.sets(sys)
+# dimsV = Tuple(length(set) for set in (Ω, L, K, S))
+# V = zeros(Float64, dimsV)
+# dimsS = Tuple(length(set) for set in (D, L, K, S))
+# Sᴰᴱᴿ = zeros(Complex, dimsS)
+
+# for b = Ω, l = L, k = K, s = S, d = D
+#     V[b, l, k, s] = Tools.Get.voltage_module(model, b, l, k, s)
+#     Sᴰᴱᴿ[d, l, k, s] = Tools.Get.power_DER(model, d, l, k, s)
+# end

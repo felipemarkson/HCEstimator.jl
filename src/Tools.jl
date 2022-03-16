@@ -1,5 +1,6 @@
 module Tools
 using DataFrames
+
 export make_Y_bus, Get
 
 function admitance(value)
@@ -40,6 +41,17 @@ end
 
 module Get
 using JuMP: value
+include("Estimator.jl")
+using .Estimator: build_sets
+
+function sets(sys)
+    (Ω, bΩ, L, K, D, S) = build_sets(sys)
+    return (Ω, bΩ, L, K, D, S)
+end
+
+function voltage_module(model, b, l, k, s)
+    return value.(model[:V_module])[b, l, k, s]
+end
 
 function voltage(model, b, l, k, s)
     Vre = value.(model[:V])[:Re, b, l, k, s]
@@ -59,7 +71,7 @@ function power(model, b, l, k, s)
     return P + 1im * Q
 end
 
-function power_DG(model, d, l, k, s)
+function power_DER(model, d, l, k, s)
     pᴰᴱᴿ = value.(model[:pᴰᴱᴿ])[d, l, k, s]
     qᴰᴱᴿ = value.(model[:qᴰᴱᴿ])[d, l, k, s]
     return pᴰᴱᴿ + 1im * qᴰᴱᴿ
