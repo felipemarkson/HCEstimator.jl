@@ -2,7 +2,7 @@
 
 # Hosting Capacity Estimator
 
-This library provides a Distributed Energy Resources' (DERs) Hosting Capacity (HC) estimation of distribution systems considering that Distribution Company (DisCo) owned other DGs installed in the system.
+This library provides a Distributed Energy Resources' Hosting Capacity estimation of distribution systems considering that the Distribution Company can partially dispatch other DERs installed in the system.
 
 ## Getting Started
 
