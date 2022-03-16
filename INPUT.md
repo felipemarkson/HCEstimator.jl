@@ -207,7 +207,7 @@ $q^{DER}$: Reactive power injection of DERs dispached by DisCo.
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;L" title="\bg_white L" />: Set of load scenarios
 
-$K$: Set of operation scenario of DERs' Owner
+$K$: Set of all possible combinations of operation of DERs' Owner
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;S" title="\bg_white S" />: Set of scenarios for HC calculation
 
