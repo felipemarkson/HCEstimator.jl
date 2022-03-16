@@ -369,7 +369,7 @@ function test_objective(sot, sys)
     sot = Estimator.add_objective(sot, sys)
     Nᴮ = length(bΩ)
     pᴴᶜ = sot[:pᴴᶜ]
-    @test MIN_SENSE == @inferred objective_sense(sot)
+    @test MAX_SENSE == @inferred objective_sense(sot)
     @test objective_function_type(sot) == JuMP.AffExpr
     @test isequal_canonical(objective_function(sot), Nᴮ * pᴴᶜ)
     return sot

@@ -219,7 +219,7 @@ function add_objective(model, sys)
     (Ω, bΩ, L, K, D, S) = Estimator.build_sets(sys)
     Nᴮ = length(bΩ)
     pᴴᶜ = model[:pᴴᶜ]
-    set_objective(model, MIN_SENSE, pᴴᶜ * Nᴮ)
+    set_objective(model, MAX_SENSE, pᴴᶜ * Nᴮ)
 
     return model
 end
