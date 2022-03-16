@@ -22,7 +22,7 @@ You will need [Julia](https://julialang.org/) v1.6 or greater, [JuMP.jl](https:/
 
 ### Exemple of use
 
-This exemple also can be found in [example.jl](example.jl).
+This exemple also can be found in [example.jl](example/example.jl).
 
 The distribution system of the example is also available in [Dolatabadi et. al. (2021)](https://ieeexplore.ieee.org/document/9258930).
 
