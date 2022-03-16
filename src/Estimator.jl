@@ -150,4 +150,32 @@ function add_substation_constraint(model, sys)
     return model
 end
 
+function add_power_injection_definition(model, sys)
+    (Ω, bΩ, L, K, D, S) = Estimator.build_sets(sys)
+    B = Estimator.build_DER_set_buses(sys)
+    PL = sys.PL
+    QL = sys.QL
+    P = model[:P]
+    Q = model[:Q]
+    pᴴᶜ = model[:pᴴᶜ]
+    μᴸ = sys.m_load
+    μᴴᶜ = sys.m_new_dg
+    @constraint(model, p[b = bΩ, l = L, k = K, s = S],
+        P[b, l, k, s] == μᴴᶜ[s] * pᴴᶜ - μᴸ[l] * PL[b])
+    @constraint(model, q[b = bΩ, l = L, k = K, s = S],
+        Q[b, l, k, s] == -μᴸ[l] * QL[b])
+
+
+    Pᴰᴱᴿ(d) = (1.0 - sys.dgs[d].alpha) * sys.dgs[d].S_limit
+    pᴰᴱᴿ = model[:pᴰᴱᴿ]
+    qᴰᴱᴿ = model[:qᴰᴱᴿ]
+    μᴰᴱᴿ = build_DER_scenario(sys)
+    @constraint(model, p_wder[d = D, l = L, k = K, s = S],
+        P[B[d], l, k, s] == μᴰᴱᴿ(k,d) * Pᴰᴱᴿ(d) + pᴰᴱᴿ[d, l, k, s] - μᴸ[l] * PL[B[d]])
+    @constraint(model, q_wder[d = D, l = L, k = K, s = S],
+        Q[B[d], l, k, s] == qᴰᴱᴿ[d, l, k, s] - μᴸ[l] * QL[B[d]])
+
+    return model
+end
+
 end

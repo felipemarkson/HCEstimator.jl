@@ -296,6 +296,65 @@ function test_add_substation_constraint(sot, sys)
     return sot
 end
 
+function test_add_power_injection_definition(sot, sys)
+    (Ω, bΩ, L, K, D, S) = Estimator.build_sets(sys)
+    B = Estimator.build_DER_set_buses(sys)
+    sot = Estimator.add_power_injection_definition(sot, sys)
+    PL = sys.PL
+    QL = sys.QL
+    subbus = sys.substation.bus
+
+    P = sot[:P]
+    Q = sot[:Q]
+    pᴴᶜ = sot[:pᴴᶜ]
+    pᴰᴱᴿ = sot[:pᴰᴱᴿ]
+    qᴰᴱᴿ = sot[:qᴰᴱᴿ]
+
+    @testset "add_power_injection_definition" begin
+        p = sot[:p]
+        q = sot[:q]
+        @testset "Without DER" for b = bΩ, l = L, k = K, s = S
+            μᴸ = sys.m_load[l]
+            μᴴᶜ = sys.m_new_dg[s]
+            @testset "No definition for substation bus" begin
+                @test_throws KeyError p[subbus, l, k, s]
+                @test_throws KeyError q[subbus, l, k, s]
+            end
+            @testset "Active" begin
+                obj = constraint_object(p[b, l, k, s])
+                @test isequal_canonical(obj.func, P[b, l, k, s] - μᴴᶜ * pᴴᶜ)
+                @test obj.set == MOI.EqualTo(-μᴸ * PL[b])
+            end
+            @testset "Reactive" begin
+                obj = constraint_object(q[b, l, k, s])
+                @test isequal_canonical(obj.func, Q[b, l, k, s])
+                @test obj.set == MOI.EqualTo(-μᴸ * QL[b])
+            end
+        end
+
+        p_wder = sot[:p_wder]
+        q_wder = sot[:q_wder]
+        μᴰᴱᴿ = Estimator.build_DER_scenario(sys)
+        @testset "With DER" for d = D, l = L, k = K, s = S
+            b = B[d]
+            Pᴰᴱᴿ = (1.0 - sys.dgs[d].alpha) * sys.dgs[d].S_limit            
+            μᴸ = sys.m_load[l]
+            @testset "Active" begin
+                obj = constraint_object(p_wder[d, l, k, s])
+                @test isequal_canonical(obj.func, P[b, l, k, s] - pᴰᴱᴿ[d, l, k, s])
+                @test obj.set == MOI.EqualTo(-μᴸ * PL[b] + Pᴰᴱᴿ * μᴰᴱᴿ(k,d))
+            end
+            @testset "Reactive" begin
+                obj = constraint_object(q_wder[d, l, k, s])
+                @test isequal_canonical(obj.func, Q[b, l, k, s] - qᴰᴱᴿ[d, l, k, s])
+                @test obj.set == MOI.EqualTo(-μᴸ * QL[b])
+            end
+        end
+    end
+
+    return sot
+end
+
 
 function runtests()
 
@@ -311,6 +370,7 @@ function runtests()
                 sot = test_add_I_V_relationship(sot, sys)
                 sot = test_add_S_VI_relationship(sot, sys)
                 sot = test_add_substation_constraint(sot, sys)
+                sot = test_add_power_injection_definition(sot, sys)
             end
         end
     end
