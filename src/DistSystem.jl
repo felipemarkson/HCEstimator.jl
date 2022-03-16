@@ -1,9 +1,10 @@
 module DistSystem
+using DataFrames
 
-export Substation, DG, System, Get
+export Substation, DG, System, factory_system
 
 include("Tools.jl")
-using .Tools
+using .Tools: make_Y_bus
 import DataFrames: DataFrame
 
 
@@ -12,6 +13,16 @@ struct DG
     P_limit
     Q_limit
     Cost
+end
+
+struct DER
+    bus::Any
+    S_limit::Float64
+    alpha::Float64
+    P_limit::Vector{Float64}
+    Q_limit::Vector{Float64}
+    scenario::Vector{Float64}
+    Cost::Vector{Float64}
 end
 
 struct Substation
@@ -36,14 +47,11 @@ mutable struct System
     substation
     dgs
     Bsh
-    System(data::DataFrame, VL::Float64, VH::Float64, sub::Substation) = factory_system(data::DataFrame, VL::Float64, VH::Float64, sub::Substation)
+    buses
     System() = new()
 end
 
-
 function factory_system(data::DataFrame, VL::Float64, VH::Float64, sub::Substation)
-
-
     sys = System()
 
     ### System's Data
@@ -59,29 +67,18 @@ function factory_system(data::DataFrame, VL::Float64, VH::Float64, sub::Substati
     sys.VH = VH
     sys.m_load = [1.0]
     sys.m_new_dg = [[0.0]]
-    sys.PL = data.P_MW[1:sys.nbuses]
-    sys.QL = data.Q_MVAr[1:sys.nbuses]
+    sys.PL = collect(skipmissing(data.P_MW))
+    sys.QL = collect(skipmissing(data.Q_MVAr))
     sys.dgs = []
-    sys.Bsh = (-(data.Bshunt_MVAr * 1e6) ./ (sub.nominal_voltage^2)) / Yᴺ
+    sys.Bsh = (-(collect(skipmissing(data.Bshunt_MVAr)) * 1e6) ./ (sub.nominal_voltage^2)) / Yᴺ
+
+    sys.buses = collect(skipmissing(data.Bus))
 
     sys.substation = sub
 
 
     return sys
 
-end
-
-module Get
-using JuMP: value
-export voltage, current, power, current_bsh, current_ij, power_dg, losses_ij, losses
-voltage(model, bus, l_scenario, type_dg_hc, scenario_hc) = value.(model[:Vre])[bus, l_scenario, type_dg_hc, scenario_hc] + 1im * value.(model[:Vim])[bus, l_scenario, type_dg_hc, scenario_hc]
-current(model, bus, l_scenario, type_dg_hc, scenario_hc) = value.(model[:Ire])[bus, l_scenario, type_dg_hc, scenario_hc] + 1im * value.(model[:Iim])[bus, l_scenario, type_dg_hc, scenario_hc]
-power(model, bus, l_scenario, type_dg_hc, scenario_hc) = value.(model[:P])[bus, l_scenario, type_dg_hc, scenario_hc] + 1im * value.(model[:Q])[bus, l_scenario, type_dg_hc, scenario_hc]
-current_bsh(model, bus, l_scenario, type_dg_hc, scenario_hc) = value.(model[:I_bsh_re])[bus, l_scenario, type_dg_hc, scenario_hc] + 1im * value.(model[:I_bsh_re])[bus, l_scenario, type_dg_hc, scenario_hc]
-current_ij(model, i, j, l_scenario, type_dg_hc, scenario_hc) = value.(model[:Iijre])[i, j, l_scenario, type_dg_hc, scenario_hc] + 1im * value.(model[:Iijim])[i, j, l_scenario, type_dg_hc, scenario_hc]
-power_dg(model, nº, l_scenario, type_dg_hc, scenario_hc) = value.(model[:Pdg])[nº, l_scenario, type_dg_hc, scenario_hc] + 1im * value.(model[:Pdg])[nº, l_scenario, type_dg_hc, scenario_hc]
-losses_ij(model, i, j, l_scenario, type_dg_hc, scenario_hc) = value.(model[:Ploss_ij])[i, j, l_scenario, type_dg_hc, scenario_hc]
-losses(model, l_scenario, type_dg_hc, scenario_hc) = value.(model[:Ploss])[l_scenario, type_dg_hc, scenario_hc]
 end
 
 end

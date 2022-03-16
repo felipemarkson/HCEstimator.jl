@@ -1,30 +1,20 @@
 module HCEstimator
 
-export DistSystem, build_model, Get
-
-using JuMP
-
 include("Tools.jl")
 using .Tools
 include("DistSystem.jl")
 using .DistSystem
-include("PowerFlow.jl")
-using .PowerFlow
+include("Estimator.jl")
+using .Estimator
+
+export DistSystem, build_model, Tools
+import JuMP
 
 
-function build_model(model, sys, hc=true)
-    if (sys.m_new_dg == [[0.0]]) | (length(sys.m_new_dg) < 1)
-        if !hc
-            model = factory_model(model, sys, false) # Min. Costs            
-        else
-            error("Needs DGs multipliers for HC")
-        end
-    else
-        if hc
-            model = factory_model(model, sys, true)
-        else
-            error("No DGs multipliers for Min. Costs")
-        end
+function build_model(model::JuMP.Model, sys, obj = true)
+    model = nl_pf(model, sys)
+    if obj
+        model = add_objective(model, sys)
     end
     return model
 end

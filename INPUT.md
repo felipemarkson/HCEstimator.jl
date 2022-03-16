@@ -74,31 +74,111 @@ println("Hosting Capacity: ", objective_value(model), "MVA")
 This library uses the following model:
 
 
-<img src="svgs/d14abed1a5115037397da740c933f4dc.svg?invert_in_darkmode" align=middle width=35.15994899999999pt height=14.15524440000002pt/> 
+$\text{max.        }$ 
 
 
-<p align="center"><img src="svgs/9440c3753d7bb170f2ba3e904f295d29.svg?invert_in_darkmode" align=middle width=194.91340605pt height=29.58934275pt/></p>
+$$
+\text{Hosting Capacity}
+\begin{cases}
+N^B p^{HC}
+\end{cases}
+$$
 
  
-<img src="svgs/9dc19dc073dbefeb7f85c0f086c9ec27.svg?invert_in_darkmode" align=middle width=22.009199849999987pt height=20.221802699999984pt/>
+$\text{s.t.        }$
 
 
-<p align="center"><img src="svgs/6257bcc9d6bb1be9fabb2f047b0a15a6.svg?invert_in_darkmode" align=middle width=459.40233405pt height=69.0417981pt/></p>
+$$
+\begin{matrix}
+\text{Power injection}\\
+\text{in buses without DERs}
+\end{matrix}
+\begin{cases}
+p_{blks} =  \mu^{HC}_{s}p^{HC} - \mu^L_lP^L_ b\\ 
+q_{blks} = - \mu^L_lQ^L_ b\\
+\forall b \in \overline{\Omega}, \forall l \in L, \forall d \in D, \forall k \in K,\forall s \in S
+\end{cases}
+$$
 
-<p align="center"><img src="svgs/39c4bae6cb3acc2e715d991e0a85dab2.svg?invert_in_darkmode" align=middle width=454.9440225pt height=69.0417981pt/></p>
+$$
+\begin{matrix}
+\text{Power injection}\\
+\text{in buses with DERs}
+\end{matrix}
+\begin{cases}
+p_{blks} = \mu^{DER}_{dk}P^{DER}_{d} + p^{DER}_{dlks} - \mu^L_lP^L_ b\\ 
+q_{blks} = q^{DER}_{dlk} - \mu^L_lQ^L_ b\\
+\forall d \in D, \forall b \in \{b_d\}, \forall l \in L,  \forall k \in K, \forall s \in S
+\end{cases}
+$$
 
-<p align="center"><img src="svgs/9b30c7275cfd7d1824970757c6dbfadb.svg?invert_in_darkmode" align=middle width=360.06316664999997pt height=118.35736770000001pt/></p>
+$$
+\begin{matrix}
+\text{Power, voltage }\\
+\text{and current}\\
+\text{relationship}
+\end{matrix}
+\begin{cases}
+p_{blks} = v^{\Re}_{blks}i^{\Re}_{blks} + v^{\Im}_{blks}i^{\Im}_{blks}\\ 
+q_{blks} = v^{\Im}_{blks}i^{\Re}_{blks} - v^{\Re}_{blks}i^{\Im}_{blks}\\
+i^{\Re}_{blks} = \sum_{j \in \Omega} G_{bj}v^{\Re}_{jlks} - B_{bj}v^{\Im}_{jlks}\\
+i^{\Im}_{blks} = \sum_{j \in \Omega} B_{bj}v^{\Re}_{jlks} + G_{bj}v^{\Im}_{jlks}\\
+\forall b \in \Omega, \forall l \in L, \forall k \in K, \forall s \in S
+\end{cases}
+$$
 
 
-<p align="center"><img src="svgs/140c4fc7f4941ce36d531461eecea83c.svg?invert_in_darkmode" align=middle width=350.37468345pt height=49.315569599999996pt/></p>
+$$
+\text{Voltage limits}
+\begin{cases}
+(\underline{V})^2\leq(v^{\Re}_{blks})^2 + (v^{\Im}_{blks})^2 \leq (\overline{V})^2\\
+\forall b \in \Omega, \forall l \in L,\forall k \in K, \forall s \in S
+\end{cases}
+$$
 
-<p align="center"><img src="svgs/cea9b2ff541f7c0eef5d5bf2e9f5e06d.svg?invert_in_darkmode" align=middle width=343.48524705pt height=138.0835962pt/></p>
+$$\begin{matrix}
+\text{Substation}\\
+\text{constraints}\\
+\end{matrix}
+\begin{cases}
+v^{\Re}_{blks} = V^{SB}\\
+v^{\Im}_{blks} = 0\\
+0 \leq p_{blks} \leq \overline{P^{SB}}\\
+0 \leq q_{blks} \leq \overline{Q^{SB}}\\
+(i^{\Re}_{blks})^2 + (i^{\Im}_{blks})^2 \geq 0\\
+\forall b \in \{b^{SB}\}, \forall l \in L,\forall k \in K, \forall s \in S
+\end{cases}
+$$
 
-<p align="center"><img src="svgs/b4a0fa9fc2087e118d5c97ddb9dc0a0b.svg?invert_in_darkmode" align=middle width=438.00400709999997pt height=120.20846475pt/></p>
+$$
+\text{DERs limits}
+\begin{cases}
+\underline{P}^{DER}_{d}\leq p^{DER}_{dlks} \leq \overline{P}^{DER}_d\\
+\underline{Q}^{DER}_{d}\leq q^{DER}_{dlks} \leq \overline{Q}^{DER}_{d}\\
+(p^{DER}_{dlks})^2 + (q^{DER}_{dlks})^2 \leq (\alpha_d^{DER} S^{DER}_{d})^2\\
+(\mu^{DER}_{dk} P^{DER}_{d} + p^{DER}_{dlks})^2 + (q^{DER}_{dlks})^2 \leq (S^{DER}_{d})^2\\
+\forall d \in D, \forall l \in L, \forall k \in K,\forall s \in S
+\end{cases}
+$$
 
-<p align="center"><img src="svgs/da595163b53361844b1b6488c5e5c679.svg?invert_in_darkmode" align=middle width=365.81203724999995pt height=69.0417981pt/></p>
+$$\begin{matrix}
+\text{Power, voltage }\\
+\text{and current}\\
+\text{constraints}
+\end{matrix}
+\begin{cases}
+-M \leq p_{blks}, q_{blks}, i^{\Re}_{blks}, i^{\Im}_{blks}\leq M\\
+-\overline{V}\leq v^{\Re}_{blks}, v^{\Im}_{blks} \leq \overline{V}\\
+\forall b \in \Omega, \forall l \in L,\forall k \in K,\forall s \in S
+\end{cases}
+$$
 
-<!-- <p align="center"><img src="svgs/e45858c011938cbd92291e86b38f0383.svg?invert_in_darkmode" align=middle width=60.913292549999994pt height=29.58934275pt/></p> -->
+<!-- $$
+\text{Costs}
+\begin{cases}
+\large?
+\end{cases}
+$$ -->
 
 
 
@@ -106,11 +186,11 @@ This library uses the following model:
 
 ### Variables
 
-<img src="svgs/2b7c31b7df641cd2ffc8154ea6e90540.svg?invert_in_darkmode" align=middle width=30.15119909999999pt height=27.6567522pt/>: Active power injection to HC calculation
+$p^{HC}$: Active power injection to HC calculation
 
-<img src="svgs/381d927132be502dc51700a3c9e7b99b.svg?invert_in_darkmode" align=middle width=39.61762199999999pt height=27.6567522pt/>: Active power injection of DERs dispached by DisCo.
+$p^{DER}$: Active power injection of DERs dispached by DisCo.
 
-<img src="svgs/4c684c9947c8124eb646279e030febe5.svg?invert_in_darkmode" align=middle width=39.27514304999999pt height=27.6567522pt/>: Reactive power injection of DERs dispached by DisCo.
+$q^{DER}$: Reactive power injection of DERs dispached by DisCo.
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;p,&space;q" title="\bg_white p, q" />: Nodal active and reactive power injection
 
@@ -127,7 +207,7 @@ This library uses the following model:
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;L" title="\bg_white L" />: Set of load scenarios
 
-<img src="svgs/d6328eaebbcd5c358f426dbea4bdbf70.svg?invert_in_darkmode" align=middle width=15.13700594999999pt height=22.465723500000017pt/>: Set of operation scenario of DERs' Owner
+$K$: Set of operation scenario of DERs' Owner
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;S" title="\bg_white S" />: Set of scenarios for HC calculation
 
@@ -141,15 +221,15 @@ This library uses the following model:
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;M" title="\bg_white M" />: A big number
 
-<img src="svgs/5de3395d9a962facf1228570f1570c3e.svg?invert_in_darkmode" align=middle width=96.65405474999999pt height=36.6389529pt/>: Upper limits of active and reactive power that can be dispached by DERs.
+$\overline{P}^{DER}, \overline{Q}^{DER}$: Upper limits of active and reactive power that can be dispached by DERs.
 
-<img src="svgs/5b087afcef448f22d28d062ec207a5bf.svg?invert_in_darkmode" align=middle width=96.65405474999999pt height=30.063960299999987pt/>: Lower limits of active and reactive power that can be dispached by DERs.
+$\underline{P}^{DER}, \underline{Q}^{DER}$: Lower limits of active and reactive power that can be dispached by DERs.
 
-<img src="svgs/8a57ec50a9fa4dfedfe3cc701d1153a9.svg?invert_in_darkmode" align=middle width=42.37443869999999pt height=27.6567522pt/>: DERs' power limit.
+$S^{DER}$: DERs' power limit.
 
-<img src="svgs/a2369470b5770634fad738b057fd1609.svg?invert_in_darkmode" align=middle width=41.923553099999985pt height=27.6567522pt/>: Proportion of DERs' power limit that can be dispached by DisCo.
+$\alpha^{DER}$: Proportion of DERs' power limit that can be dispached by DisCo.
 
-<img src="svgs/fae5399046b45871e8d75acb5fda8054.svg?invert_in_darkmode" align=middle width=44.18382704999999pt height=27.6567522pt/>: DERs' owner power injection capacity. <img src="svgs/1f4b9873ee655894fbfe1455ad442377.svg?invert_in_darkmode" align=middle width=193.1390175pt height=27.6567522pt/>
+$P^{DER}$: DERs' owner power injection capacity. $P^{DER} = (1 - \alpha^{DER})S^{DER}$
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;\overline{P^{SB}},&space;\overline{Q^{SB}}" title="\bg_white \overline{P^{SB}}, \overline{Q^{SB}}" />: Active and reactive limit of the substation
 
@@ -157,7 +237,7 @@ This library uses the following model:
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;\mu^{HC}" title="\bg_white \mu^{HC}" />: Scenario multiplier for HC calculation
 
-<img src="svgs/777d440c6c333beeb18498c6d177104f.svg?invert_in_darkmode" align=middle width=41.25197999999999pt height=27.6567522pt/>: DERs' Owner Operation scenario
+$\mu^{DER}$: DERs' Owner Operation scenario
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;N^B" title="\bg_white N^B" />: Quantity of buses without DGs and substation
 
