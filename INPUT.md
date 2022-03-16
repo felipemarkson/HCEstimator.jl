@@ -27,52 +27,46 @@ This exemple also can be found in [example.jl](example.jl).
 The distribution system of the example is also available in [Dolatabadi et. al. (2021)](https://ieeexplore.ieee.org/document/9258930).
 
 ```julia
-using CSV, DataFrames
-using JuMP
-using Ipopt
-
 using HCEstimator
+using JuMP, Ipopt
+using DataFrames, CSV
 
+VN = 12660
+Sb = 1e6
+Yb = Sb / (VN^2)
 
-data = DataFrame(CSV.File("exemple_data.csv"))
-
-VL = 0.95   #Lower limit voltage
-VH = 1.05  #Higher limit voltage
-
-sub = DistSystem.Substation(
-    12600.0,                # Nominal Voltage
-    1,                      # Bus
-    1.,                     # Voltage(p.u)
-    4.,                     # Active power limit(MW)
-    2.5,                    # Reactive power limit(MVAr)
-    [240.0, 12.0, 0.003]    # Costs [Fixed, Linear, Quadratic]
-)
-
-dg1 = DistSystem.DG(
-    18,                     # Bus
-    0.2,                    # Active power limit(MW)
-    0.0,                    # Reative power limit(MW)
-    [210; 10.26; 0.0026]    # Costs [Fixed, Linear, Quadratic]
-)
-
-sys = DistSystem.System(data, VL, VH, sub)
-
+Vsub = 1.0
+sub_P_limt = 4
+sub_Q_limit = 2.5
+bus_sub = 1
+nbuses = 33
+VL = 0.93
+VH = 1.05
+sub = DistSystem.Substation(VN, bus_sub, Vsub, sub_P_limt, sub_Q_limit, [0.003, 12, 240])
+data = DataFrame(CSV.File("example/case33.csv"))
+sys = DistSystem.factory_system(data, VL, VH, sub)
+der1 = DistSystem.DER(
+    18,                  # Bus
+    0.02,                # Sᴰᴱᴿ (MVA)
+    0.05,                # αᴰᴱᴿ
+    [0.0, 0.03],         # [Pᴰᴱᴿ_low, Pᴰᴱᴿ_upper]  (MW)
+    [-0.03, 0.03],       # [Qᴰᴱᴿ_low, Qᴰᴱᴿ_upper]  (MVAr)
+    [0.0, 1.0],          # Operation Scenarios
+    [0.0026, 10.26, 210] # Costs (Not used) 
+    ) #DG dispatchable
 sys.dgs = [
-    dg1,
-    DistSystem.DG(22, 0.2, 0.,[210; 10.26; 0.0026]),
-    DistSystem.DG(25, 0.2, 0.,[210; 10.26; 0.0026]),
-    DistSystem.DG(33, 0.2, 0.,[210; 10.26; 0.0026])
+    der1,
+    DistSystem.DER(22, 0.02, 0.05, [0.0, 0.0], [-0.03, 0.03], [0.0, 1.0], [0.0026, 10.26, 210]), #DG non-active dispatchable
+    DistSystem.DER(33, 0.02, 0.15, [-0.01, 0.01], [-0.01, 0.01], [-1.0, 0.0, 1.0], [0.0026, 10.26, 210]), #ESS
+    DistSystem.DER(25, 0.02, 0.0, [0.0, 0.0], [0.0, 0.0], [0.0, 1.0], [0.0026, 10.26, 210]), #DG non-dispatchable
 ]
-sys.m_load = collect(0.6:0.2:1) # Load Multipliers
-sys.m_new_dg = [
-    collect(0.0:0.2:1) # Generic generator Multipliers
-]
+sys.m_load = [0.5, 0.8, 1.0]
+sys.m_new_dg = [-1.0, 0.0, 1]
 
-model = Model(Ipopt.Optimizer)  # Create a JuMP model
-model = build_model(model, sys) # Build the HC model
-optimize!(model)                # Optimize!
+model = build_model(Model(Ipopt.Optimizer), sys)
 
-println("Hosting Capacity: ", objective_value(model))
+optimize!(model)
+println("Hosting Capacity: ", objective_value(model), "MVA")
 ```
 
 ## Mathematical Model
@@ -263,10 +257,16 @@ $\mu^{DER}$: DERs' Owner Operation scenario
 
 - [x] Implement the minimization of costs.
 
+- [x] Validate the model with Matpower.
+
 - [ ] Implement changes on system's topology.
 
-- [ ] Implement tests for power flow calculation using a simple system
+- [x] Implement tests for power flow calculation using a simple system
 
-- [ ] Describe the relationship between the model and codebase
+- [x] Implement tests for power flow calculation using the 33-bus
+
+- [ ] Implement tests for others functions
+
+- [x] Describe the relationship between the model and codebase
 
 - [ ] Better Documentation
