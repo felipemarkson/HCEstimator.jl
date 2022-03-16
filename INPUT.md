@@ -2,7 +2,7 @@
 
 # Hosting Capacity Estimator
 
-This library provides a Distributed Generators (DGs) Hosting Capacity (HC) of distribution systems considering that Distribution Company (DisCo) owned other DGs installed in the system.
+This library provides a Distributed Generators (DGs) Hosting Capacity (HC) estimation of distribution systems considering that Distribution Company (DisCo) owned other DGs installed in the system.
 
 ## Getting Started
 
