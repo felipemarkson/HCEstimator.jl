@@ -397,6 +397,26 @@ function test_nl_pf(sot, sys, case)
     return sot
 end
 
+function test_model_should_be_feasible!(sot, sys, name)
+    @testset "solve $(name)" begin
+        set_optimizer(sot, Ipopt.Optimizer)
+        set_silent(sot)
+        optimize!(sot)
+
+
+        @testset "Optimization" begin
+            @testset "Solved: $(termination_status(sot))" begin
+                @test termination_status(sot) == LOCALLY_SOLVED
+            end
+            @testset "Feasible: $(primal_status(sot))" begin
+                @test primal_status(sot) == FEASIBLE_POINT
+            end
+        end
+    end
+    return sot
+
+end
+
 
 
 function runtests()
@@ -416,6 +436,7 @@ function runtests()
                 sot = test_add_power_injection_definition(sot, sys)
                 sot = test_add_ders_limits(sot, sys)
                 sot = test_nl_pf(sot, sys, case)
+                sot = test_model_should_be_feasible!(sot, sys, name)
             end
         end
     end
