@@ -1,7 +1,6 @@
 module Tools
 using DataFrames
 export make_Y_bus, Get
-using JuMP: value
 
 function admitance(value)
     return value^-1
@@ -40,6 +39,8 @@ end
 
 
 module Get
+using JuMP: value
+
 function voltage(model, b, l, k, s)
     Vre = value.(model[:V])[:Re, b, l, k, s]
     Vim = value.(model[:V])[:Im, b, l, k, s]
