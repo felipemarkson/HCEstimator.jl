@@ -18,6 +18,21 @@ function build_DER_set_buses(sys)
     return [dg.bus for dg in sys.dgs]
 end
 
+function build_DER_scenario(sys)
+    qnt_scenarios = reverse([length(der.scenario) for der in sys.dgs])
+    values = zeros(Int, length(sys.dgs))
+    μᴰᴱᴿ(k::Int, d::Int) = begin
+        k_n = k - 1 # To turn value 0 as a frist index        
+        for (indx, qnt_scenario) in enumerate(qnt_scenarios)
+            values[indx] =(k_n % qnt_scenario) + 1 # To back to value 1 as a first index
+            k_n = div(k_n, qnt_scenario)
+        end
+        indx = reverse(values)[d]
+        return sys.dgs[d].scenario[indx]
+    end
+    return μᴰᴱᴿ
+end
+
 function add_variables(model, sys)
     (Ω, bΩ, L, K, D, S) = Estimator.build_sets(sys)
 

@@ -70,6 +70,22 @@ function test_build_DER_set_buses(sys)
 
 end
 
+function test_build_DER_scenario(sys, name)
+    if name =="case3_dist"
+        scenario = [
+            [1, 1], [1, 2], [1, 3], [2, 1], [2, 2], [2, 3],
+        ]
+        func = Estimator.build_DER_scenario(sys)
+        for (k, K) in enumerate(scenario)
+            for (d, expected) in enumerate(K)
+                @test func(k,d) == sys.dgs[d].scenario[expected]
+            end
+        end
+
+    end
+
+end
+
 function test_build_sets(sys)
     Ω = sys.buses
     sub_der = [Estimator.build_DER_set_buses(sys); sys.substation.bus]
@@ -286,6 +302,7 @@ function runtests()
         for case in [case3_dist, case33]
             sys, name = case()
             @testset "$name" begin
+                test_build_DER_scenario(sys, name)
                 test_build_sets(sys)
                 sot = Model()
                 sot = test_add_variables(sot, sys)
