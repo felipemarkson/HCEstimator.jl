@@ -1,6 +1,7 @@
 module Tools
 using DataFrames
-export make_Y_bus
+export make_Y_bus, Get
+using JuMP: value
 
 function admitance(value)
     return value^-1
@@ -35,6 +36,39 @@ function make_Y_bus(data, VN)
 
     return Y
 
+end
+
+
+module Get
+function voltage(model, b, l, k, s)
+    Vre = value.(model[:V])[:Re, b, l, k, s]
+    Vim = value.(model[:V])[:Im, b, l, k, s]
+    return Vre + 1im * Vim
+end
+
+function current(model, b, l, k, s)
+    Ire = value.(model[:I])[:Re, b, l, k, s]
+    Iim = value.(model[:I])[:Im, b, l, k, s]
+    return Ire + 1im * Iim
+end
+
+function power(model, b, l, k, s)
+    P = value.(model[:P])[b, l, k, s]
+    Q = value.(model[:Q])[b, l, k, s]
+    return P + 1im * Q
+end
+
+function power_DG(model, d, l, k, s)
+    pᴰᴱᴿ = value.(model[:pᴰᴱᴿ])[d, l, k, s]
+    qᴰᴱᴿ = value.(model[:qᴰᴱᴿ])[d, l, k, s]
+    return pᴰᴱᴿ + 1im * qᴰᴱᴿ
+end
+
+function losses(model, l, k, s)
+    Ploss = value.(model[:Ploss])[l, k, s]
+    Qloss = value.(model[:Qloss])[l, k, s]
+    return Ploss + 1im * Qloss
+end
 end
 
 end
