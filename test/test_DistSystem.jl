@@ -20,7 +20,7 @@ function test_factory_system_case3_dist()
     VL = 0.95
     VH = 1.05
 
-    data = DataFrame(CSV.File("tests/case3_dist.csv"))
+    data = DataFrame(CSV.File("case3_dist.csv"))
 
     Y_target = [
         20-40im -20+40im 0+0im
@@ -66,7 +66,7 @@ function test_factory_system_case33_dist()
     VL = 0.95
     VH = 1.05
 
-    data = DataFrame(CSV.File("tests/case33.csv"))
+    data = DataFrame(CSV.File("case33.csv"))
        
     Y_target = get_ybus()
 

@@ -20,7 +20,7 @@ function test_make_Y_bus()
     ]
     target = target_pu * Yb
 
-    data = DataFrame(CSV.File("tests/case3_dist.csv"))
+    data = DataFrame(CSV.File("case3_dist.csv"))
 
     result = Tools.make_Y_bus(data, VN)
     @testset "make_Y_bus" begin
