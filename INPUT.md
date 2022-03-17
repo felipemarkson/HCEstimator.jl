@@ -169,7 +169,6 @@ $$\begin{matrix}
 \text{constraints}\\
 \end{matrix}
 \begin{cases}
-v^{\Re}_{blks} = V^{SB}\\
 v^{\Im}_{blks} = 0\\
 0 \leq p_{blks} \leq \overline{P^{SB}}\\
 0 \leq q_{blks} \leq \overline{Q^{SB}}\\

@@ -120,7 +120,7 @@ This library uses the following model:
 
 <p align="center"><img src="svgs/140c4fc7f4941ce36d531461eecea83c.svg?invert_in_darkmode" align=middle width=350.37468345pt height=49.315569599999996pt/></p>
 
-<p align="center"><img src="svgs/cea9b2ff541f7c0eef5d5bf2e9f5e06d.svg?invert_in_darkmode" align=middle width=343.48524705pt height=138.0835962pt/></p>
+<p align="center"><img src="svgs/6cf6441e282f47db0b45579b54503b07.svg?invert_in_darkmode" align=middle width=343.48524705pt height=118.35736770000001pt/></p>
 
 <p align="center"><img src="svgs/b4a0fa9fc2087e118d5c97ddb9dc0a0b.svg?invert_in_darkmode" align=middle width=438.00400709999997pt height=120.20846475pt/></p>
 

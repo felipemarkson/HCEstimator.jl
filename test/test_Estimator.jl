@@ -214,9 +214,9 @@ function test_add_substation_constraint(sot, sys)
 
     @testset "add_substation_constraint" for l = L, k = K, s = S
         @testset "Voltage" begin
-            @test is_fixed(V[:Re, i, l, k, s])
+            @test !is_fixed(V[:Re, i, l, k, s])
             @test is_fixed(V[:Im, i, l, k, s])
-            @test fix_value(V[:Re, i, l, k, s]) == sys.substation.voltage
+            @test start_value(V[:Re, i, l, k, s]) == sys.substation.voltage
             @test fix_value(V[:Im, i, l, k, s]) == 0
         end
         @testset "Power" begin
