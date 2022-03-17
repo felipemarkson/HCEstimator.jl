@@ -29,7 +29,7 @@ function case3_dist()
     VL = 0.95
     VH = 1.05
     sub = DistSystem.Substation(VN, bus_sub, Vsub, P_limt, Q_limit, [1.0, 2, 3])
-    data = DataFrame(CSV.File("tests/case3_dist.csv"))
+    data = DataFrame(CSV.File("case3_dist.csv"))
     case = Case(
         "case3_dist",
         [1.0000, 0.9641, 0.9511],
@@ -54,7 +54,7 @@ function case33()
     VL = 0.90
     VH = 1.05
     sub = DistSystem.Substation(VN, bus_sub, Vsub, P_limt, Q_limit, [1.0, 2, 3])
-    data = DataFrame(CSV.File("tests/case33.csv"))
+    data = DataFrame(CSV.File("case33.csv"))
     sys = DistSystem.factory_system(data, VL, VH, sub)
     case = Case(
         "case33",

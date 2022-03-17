@@ -2,7 +2,7 @@ using HCEstimator
 using JuMP, Ipopt
 using DataFrames, CSV
 
-data = DataFrame(CSV.File("example/case33.csv"))
+data = DataFrame(CSV.File("case33.csv"))
 
 sub = DistSystem.Substation(
     12660,              # Nominal voltage (V)
