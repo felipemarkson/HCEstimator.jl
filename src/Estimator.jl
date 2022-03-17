@@ -133,9 +133,12 @@ function add_substation_constraint(model, sys)
     Q = model[:Q]
     sub = sys.substation
     for l = L, k = K, s = S
-        fix(V[:Re, sub.bus, l, k, s], sub.voltage, force = true)
         fix(V[:Im, sub.bus, l, k, s], 0.0, force = true)
+        set_start_value(V[:Re, sub.bus, l, k, s], sub.voltage)
+        set_lower_bound(V[:Re, sub.bus, l, k, s], 0.9)        
+        set_upper_bound(V[:Re, sub.bus, l, k, s], 1.1)
     end
+    
 
     @constraint(model, sub_plimit[l = L, k = K, s = S],
         0 <= P[sub.bus, l, k, s] <= sub.P_limit
