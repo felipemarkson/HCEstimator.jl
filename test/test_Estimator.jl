@@ -246,6 +246,7 @@ function test_add_line_constraint(sot, sys)
     (Ω, bΩ, L, K, D, S) = Estimator.build_sets(sys)
     F = sys.amp
     Ωᴮ = keys(F)
+    sot = Estimator.add_line_constraint(sot, sys)
 
     f = sot[:f]
     V = sot[:V]
