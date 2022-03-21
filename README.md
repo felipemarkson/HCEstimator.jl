@@ -49,7 +49,7 @@ This library uses the following model:
 
 <p align="center"><img src="svgs/140c4fc7f4941ce36d531461eecea83c.svg?invert_in_darkmode" align=middle width=350.37468345pt height=49.315569599999996pt/></p>
 
-<p align="center"><img src="svgs/c9c784045ac0c64ebb7f7b0b9f007505.svg?invert_in_darkmode" align=middle width=404.00860665pt height=118.35736770000001pt/></p>
+<p align="center"><img src="svgs/cc6ccc5eb6638967bd57b2084c7408c5.svg?invert_in_darkmode" align=middle width=421.12247099999996pt height=118.35736770000001pt/></p>
 
 <p align="center"><img src="svgs/6cf6441e282f47db0b45579b54503b07.svg?invert_in_darkmode" align=middle width=343.48524705pt height=118.35736770000001pt/></p>
 

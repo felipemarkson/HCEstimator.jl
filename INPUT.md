@@ -96,10 +96,10 @@ $$
 $$
 \text{Lines limits}
 \begin{cases}
-f_{ij}^{\Re} = (v^{\Re}_{ilks} - v^{\Re}_{jlks})G_{ij} - (v^{\Im}_{ilks} - v^{\Im}_{jlks})B_ {ij}\\
-f_{ij}^{\Im} = (v^{\Im}_{ilks} - v^{\Im}_{jlks})G_{ij} + (v^{\Re}_{ilks} - v^{\Re}_{jlks})B_ {ij}\\
-(f_{ij}^{\Re})^2 + (f_{ij}^{\Im})^2 \leq (F_{ij})^2\\
--F_{ij} \leq f_{ij}^{\Re}, f_{ij}^{\Im} \leq F_{ij}\\
+f_{ijlks}^{\Re} = (v^{\Re}_{ilks} - v^{\Re}_{jlks})G_{ij} - (v^{\Im}_{ilks} - v^{\Im}_{jlks})B_ {ij}\\
+f_{ijlks}^{\Im} = (v^{\Im}_{ilks} - v^{\Im}_{jlks})G_{ij} + (v^{\Re}_{ilks} - v^{\Re}_{jlks})B_ {ij}\\
+(f_{ijlks}^{\Re})^2 + (f_{ijlks}^{\Im})^2 \leq (F_{ij})^2\\
+-F_{ij} \leq f_{ijlks}^{\Re}, f_{ijlks}^{\Im} \leq F_{ij}\\
 \forall (i,j) \in \Omega^{B}, \forall l \in L,\forall k \in K, \forall s \in S
 \end{cases}
 $$
