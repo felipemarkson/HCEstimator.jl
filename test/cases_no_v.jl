@@ -47,8 +47,6 @@ function case3_dist_no_dgs()
     data = DataFrame(CSV.File("case3_dist.csv"))
 
     sys = DistSystem.factory_system(data, VL, VH, sub)
-
-    sys.dgs = []
     sys.m_load = [0.5, 0.8, 1.0]
     sys.m_new_dg = [-1.0, 0.0, 1]
 
