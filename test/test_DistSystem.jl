@@ -35,7 +35,7 @@ function test_factory_system_case3_dist()
 
     @testset "case3_dist" begin
 
-        @testset "sys.Y[$i, $j]" for i=1:nbuses, j=1:nbuses
+        for i=1:nbuses, j=1:nbuses
             @test Y_target[i,j] ≈ sys.Y[i,j] atol=1e-4
         end    
         @test nbuses == sys.nbuses
@@ -77,7 +77,7 @@ function test_factory_system_case33_dist()
 
     @testset "case33" begin
 
-        @testset "sys.Y[$i, $j]" for i=1:nbuses, j=1:nbuses
+        for i=1:nbuses, j=1:nbuses
             @test Y_target[i,j] ≈ sys.Y[i,j] atol=1e-3
         end    
         @test nbuses == sys.nbuses
