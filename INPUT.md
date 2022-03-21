@@ -180,6 +180,7 @@ $$
 $$
 \text{DERs limits}
 \begin{cases}
+-\beta^{DER}_dE^{DER}_{d}\leq p^{DER}_{dlks}T^{CUR} \leq \beta^{DER}_dE^{DER}_d\\
 \underline{P}^{DER}_{d}\leq p^{DER}_{dlks} \leq \overline{P}^{DER}_d\\
 \underline{Q}^{DER}_{d}\leq q^{DER}_{dlks} \leq \overline{Q}^{DER}_{d}\\
 (p^{DER}_{dlks})^2 + (q^{DER}_{dlks})^2 \leq (\alpha_d^{DER} S^{DER}_{d})^2\\
@@ -246,7 +247,11 @@ $K$: Set of all possible combinations of operation of DERs' Owner
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;V^{SB}" title="\bg_white V^{SB}" />: Substation's voltage
 
+$T^{CUR}$: Time to  curtailment energy resources  
+
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;M" title="\bg_white M" />: A big number
+
+$E^{DER}$: DERs' energy capacity.
 
 $\overline{P}^{DER}, \overline{Q}^{DER}$: Upper limits of active and reactive power that can be dispached by DERs.
 
@@ -255,6 +260,8 @@ $\underline{P}^{DER}, \underline{Q}^{DER}$: Lower limits of active and reactive 
 $S^{DER}$: DERs' power limit.
 
 $\alpha^{DER}$: Proportion of DERs' power limit that can be dispached by DisCo.
+
+$\beta^{DER}$:  Proportion of  DERs' Energy Capacity that can be used by DisCo.
 
 $P^{DER}$: DERs' owner power injection capacity. $P^{DER} = (1 - \alpha^{DER})S^{DER}$
 

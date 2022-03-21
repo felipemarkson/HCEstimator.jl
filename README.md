@@ -122,7 +122,7 @@ This library uses the following model:
 
 <p align="center"><img src="svgs/6cf6441e282f47db0b45579b54503b07.svg?invert_in_darkmode" align=middle width=343.48524705pt height=118.35736770000001pt/></p>
 
-<p align="center"><img src="svgs/b4a0fa9fc2087e118d5c97ddb9dc0a0b.svg?invert_in_darkmode" align=middle width=438.00400709999997pt height=120.20846475pt/></p>
+<p align="center"><img src="svgs/cdd9c97351d2852cca8d647b0fdfb93b.svg?invert_in_darkmode" align=middle width=438.00400709999997pt height=139.1657751pt/></p>
 
 <p align="center"><img src="svgs/da595163b53361844b1b6488c5e5c679.svg?invert_in_darkmode" align=middle width=365.81203724999995pt height=69.0417981pt/></p>
 
@@ -167,7 +167,11 @@ This library uses the following model:
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;V^{SB}" title="\bg_white V^{SB}" />: Substation's voltage
 
+<img src="svgs/d36129378f3e3dd4b3157b9b640cd94e.svg?invert_in_darkmode" align=middle width=42.27444209999999pt height=27.6567522pt/>: Time to  curtailment energy resources  
+
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;M" title="\bg_white M" />: A big number
+
+<img src="svgs/a1bcca6b26bdfc2be1eb755a53298c5f.svg?invert_in_darkmode" align=middle width=44.429233199999985pt height=27.6567522pt/>: DERs' energy capacity.
 
 <img src="svgs/5de3395d9a962facf1228570f1570c3e.svg?invert_in_darkmode" align=middle width=96.65405474999999pt height=36.6389529pt/>: Upper limits of active and reactive power that can be dispached by DERs.
 
@@ -176,6 +180,8 @@ This library uses the following model:
 <img src="svgs/8a57ec50a9fa4dfedfe3cc701d1153a9.svg?invert_in_darkmode" align=middle width=42.37443869999999pt height=27.6567522pt/>: DERs' power limit.
 
 <img src="svgs/a2369470b5770634fad738b057fd1609.svg?invert_in_darkmode" align=middle width=41.923553099999985pt height=27.6567522pt/>: Proportion of DERs' power limit that can be dispached by DisCo.
+
+<img src="svgs/09e4e271511208a731624abd23a74597.svg?invert_in_darkmode" align=middle width=41.51258924999999pt height=27.6567522pt/>:  Proportion of  DERs' Energy Capacity that can be used by DisCo.
 
 <img src="svgs/fae5399046b45871e8d75acb5fda8054.svg?invert_in_darkmode" align=middle width=44.18382704999999pt height=27.6567522pt/>: DERs' owner power injection capacity. <img src="svgs/1f4b9873ee655894fbfe1455ad442377.svg?invert_in_darkmode" align=middle width=193.1390175pt height=27.6567522pt/>
 
