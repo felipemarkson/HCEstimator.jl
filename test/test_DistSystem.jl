@@ -98,7 +98,11 @@ function test_factory_system_case33_dist()
     sub = DistSystem.Substation(VN, bus_sub, Vsub, P_limt, Q_limit, [1.0, 2, 3])
     Bsh = (-(data.Bshunt_MVAr * 1e6) ./ (sub.nominal_voltage^2)) / Yb
 
-    amp = collect(skipmissing(data.Amp_pu))
+    amps = collect(skipmissing(data.Amp_pu))
+    fb = collect(skipmissing(data.FB))
+    tb = collect(skipmissing(data.TB))
+
+    amp = Dict((fb[k], t[k]) => amps[k] for k = 1:length(amps))
 
     sys = DistSystem.factory_system(data, VL, VH, sub)
 
