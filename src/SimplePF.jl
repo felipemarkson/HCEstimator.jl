@@ -20,15 +20,15 @@ end
 function add_voltage_constraints(model, sys)
 
     calc_angle(a, b) = rad2deg(angle(a + 1im * b))
-    register(model, :calc_angle, 2, calc_angle; autodiff = true)
+    register(model, :calc_angle, 2, calc_angle; autodiff=true)
 
     V = model[:V]
 
-    @expression(model, V²[i = sys.buses], V[:Re, i]^2 + V[:Im, i]^2)
-    @NLexpression(model, V_module[i = sys.buses], sqrt(V²[i]))
-    @NLexpression(model, V_angle_deg[i = sys.buses], calc_angle(V[:Re, i], V[:Im, i]))
+    @expression(model, V²[i=sys.buses], V[:Re, i]^2 + V[:Im, i]^2)
+    @NLexpression(model, V_module[i=sys.buses], sqrt(V²[i]))
+    @NLexpression(model, V_angle_deg[i=sys.buses], calc_angle(V[:Re, i], V[:Im, i]))
 
-    @constraint(model, voltage_constraint[i = sys.buses],
+    @constraint(model, voltage_constraint[i=sys.buses],
         sys.VL^2 <= V²[i] <= sys.VH^2
     )
 
@@ -45,7 +45,7 @@ function add_I_V_relationship(model, sys)
     G = real.(sys.Y)
     B = imag.(sys.Y)
     V = model[:V]
-    @expression(model, I[z = [:Re, :Im], i = sys.buses],
+    @expression(model, I[z=[:Re, :Im], i=sys.buses],
         if z == :Re
             sum(
                 G[i, j] * V[:Re, j] - B[i, j] * V[:Im, j]
@@ -65,11 +65,11 @@ function add_S_VI_relationship(model, sys)
     #   Si = Vi x Ii*
     V = model[:V]
     I = model[:I]
-    @expression(model, P[i = sys.buses],
+    @expression(model, P[i=sys.buses],
         mc_re(V[:Re, i], V[:Im, i], I[:Re, i], -I[:Im, i])
     )
 
-    @expression(model, Q[i = sys.buses],
+    @expression(model, Q[i=sys.buses],
         mc_im(V[:Re, i], V[:Im, i], I[:Re, i], -I[:Im, i])
     )
     return model
@@ -97,8 +97,8 @@ function add_substation_constraint(model, sys)
     P = model[:P]
     Q = model[:Q]
     sub = sys.substation
-    fix(V[:Re, sub.bus], sub.voltage, force = true)
-    fix(V[:Im, sub.bus], 0.0, force = true)
+    fix(V[:Re, sub.bus], sub.voltage, force=true)
+    fix(V[:Im, sub.bus], 0.0, force=true)
 
     @constraint(model, sub_plimit,
         0 <= P[sub.bus] <= sub.P_limit
@@ -120,10 +120,10 @@ function add_power_injection_definition(model, sys)
     Q = model[:Q]
     P = model[:P]
 
-    @constraint(model, q[i = buses_wout_sub],
+    @constraint(model, q[i=buses_wout_sub],
         Q[i] == -sys.QL[i]
     )
-    @constraint(model, p[i = buses_wout_sub],
+    @constraint(model, p[i=buses_wout_sub],
         P[i] == -sys.PL[i]
     )
 
