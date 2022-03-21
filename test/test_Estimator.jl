@@ -46,7 +46,7 @@ function test_build_sets(sys)
     else
         K = collect(1:reduce(*, length(der.scenario) for der in sys.dgs))
     end
-    
+
     S = collect(1:length(sys.m_new_dg))
 
     (Ωr, bΩr, Lr, Kr, Dr, Sr) = Estimator.build_sets(sys)
@@ -315,23 +315,28 @@ function test_add_ders_limits(sot, sys)
     sot = Estimator.add_ders_limits(sot, sys)
     pᴰᴱᴿ = sot[:pᴰᴱᴿ]
     qᴰᴱᴿ = sot[:qᴰᴱᴿ]
+
     disco_der_limit = sot[:disco_der_limit]
+    der_limit = sot[:der_limit]
+    der_energy_limit = sot[:energy_limit]
     μᴰᴱᴿ = Estimator.build_DER_scenario(sys)
-    @testset "disco_der_limit" for d = D, l = L, k = K, s = S
+    for d = D, l = L, k = K, s = S
         obj = constraint_object(disco_der_limit[d, l, k, s])
         @test isequal_canonical(obj.func, pᴰᴱᴿ[d, l, k, s]^2 + qᴰᴱᴿ[d, l, k, s]^2)
         @test obj.set == MOI.LessThan((sys.dgs[d].alpha * sys.dgs[d].S_limit)^2)
-    end
 
-    der_limit = sot[:der_limit]
-
-    @testset "der_limit" for d = D, l = L, k = K, s = S
         Pᴰᴱᴿ = (1.0 - sys.dgs[d].alpha) * sys.dgs[d].S_limit
         obj = constraint_object(der_limit[d, l, k, s])
         canonical = pᴰᴱᴿ[d, l, k, s]^2 + qᴰᴱᴿ[d, l, k, s]^2 + 2 * Pᴰᴱᴿ * μᴰᴱᴿ(k, d) * pᴰᴱᴿ[d, l, k, s]
         @test isequal_canonical(obj.func, canonical)
         left = (sys.dgs[d].S_limit)^2 - (Pᴰᴱᴿ * μᴰᴱᴿ(k, d))^2
         @test obj.set == MOI.LessThan(left)
+
+        Eᴰᴱᴿ = sys.dgs[d].energy
+        βᴰᴱᴿ = sys.dgs[d].beta
+        obj = constraint_object(der_energy_limit[d, l, k, s])
+        @test isequal_canonical(obj.func, pᴰᴱᴿ[d, l, k, s] * sys.time_curr)
+        @test obj.set == MOI.Interval(-βᴰᴱᴿ * Eᴰᴱᴿ, βᴰᴱᴿ * Eᴰᴱᴿ)
     end
 
 

@@ -1,7 +1,7 @@
 name = "HCEstimator"
 uuid = "58746d35-f72f-4511-a7fb-329db4d2f166"
 authors = ["Felipe M. dos S. Monteiro <fmarkson@outlook.com>"]
-version = "0.1.2"
+version = "0.1.3"
 
 [deps]
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"

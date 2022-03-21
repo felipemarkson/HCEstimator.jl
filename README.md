@@ -26,77 +26,6 @@ This exemple also can be found in [example.jl](example/example.jl).
 
 The distribution system of the example is also available in [Dolatabadi et. al. (2021)](https://ieeexplore.ieee.org/document/9258930).
 
-```julia
-using HCEstimator
-using JuMP, Ipopt
-using DataFrames, CSV
-
-data = DataFrame(CSV.File("example/case33.csv"))
-
-sub = DistSystem.Substation(
-    12660,              # Nominal voltage (V)
-    1,                  # Bus
-    1.0,                # Vˢᴮ: Voltage (p.u.)
-    4.0,                # Pˢᴮ: Active power capacity (MW)
-    2.5,                # Qˢᴮ: Reactive power capacity (MVAr)
-    [0.003, 12, 240]    # Costs (Not used)
-    )
-
-sys = DistSystem.factory_system(
-    data,               # Dataframe of the distribution system
-    0.93,               # V_low: Voltage lower bound (p.u.)
-    1.05,               # V_upper: Voltage upper bound (p.u.)
-    sub                 # DistSystem.Sustation
-    )
-
-der1 = DistSystem.DER(
-    18,                  # Bus
-    0.02,                # Sᴰᴱᴿ (MVA)
-    0.05,                # αᴰᴱᴿ
-    [0.0, 0.03],         # [Pᴰᴱᴿ_low, Pᴰᴱᴿ_upper]  (MW)
-    [-0.03, 0.03],       # [Qᴰᴱᴿ_low, Qᴰᴱᴿ_upper]  (MVAr)
-    [0.0, 1.0],          # Possible DER's Operation Scenarios ≠ μᴰᴱᴿ
-    [0.0026, 10.26, 210] # Costs (Not used) 
-) #DG dispatchable
-
-sys.dgs = [
-    der1,
-    DistSystem.DER(22, 0.02, 0.05, [0.0, 0.0], [-0.03, 0.03], [0.0, 1.0], [0.0026, 10.26, 210]), #DG non-active dispatchable
-    DistSystem.DER(33, 0.02, 0.05, [-0.01, 0.01], [-0.01, 0.01], [-1.0, 0.0, 1.0], [0.0026, 10.26, 210]), #ESS
-    DistSystem.DER(25, 0.02, 0.0, [0.0, 0.0], [0.0, 0.0], [0.0, 1.0], [0.0026, 10.26, 210]), #DG non-dispatchable
-]
-
-sys.m_load = [0.5, 0.8, 1.0] # μᴸ
-sys.m_new_dg = [-1.0, 0.0, 1] # μᴴᶜ
-
-model = build_model(Model(Ipopt.Optimizer), sys)
-set_silent(model)
-
-optimize!(model)
-println("Hosting Capacity: ", round(objective_value(model), digits = 3), " MVA")
-
-(Ω, bΩ, L, K, D, S) = Tools.Get.sets(sys)
-
-## Voltage magnitude and power injection
-dims_bus = Tuple(length(set) for set in (Ω, L, K, S))
-V = zeros(Float64, dims_bus)
-P = zeros(Float64, dims_bus)
-Q = zeros(Float64, dims_bus)
-
-## Power of DERs installed used by DisCO
-dims_der = Tuple(length(set) for set in (D, L, K, S))
-Pᴰᴱᴿ = zeros(Float64, dims_der)
-Qᴰᴱᴿ = zeros(Float64, dims_der)
-
-for b = Ω, l = L, k = K, s = S, d = D
-    V[b, l, k, s] = Tools.Get.voltage_module(model, b, l, k, s)
-    P[b, l, k, s] = Tools.Get.power_active(model, b, l, k, s)
-    Q[b, l, k, s] = Tools.Get.power_reactive(model, b, l, k, s)
-    Pᴰᴱᴿ[d, l, k, s] = Tools.Get.power_active_DER(model, d, l, k, s)
-    Qᴰᴱᴿ[d, l, k, s] = Tools.Get.power_reactive_DER(model, d, l, k, s)
-end
-```
-
 ## Mathematical Model
 
 This library uses the following model:
@@ -122,7 +51,7 @@ This library uses the following model:
 
 <p align="center"><img src="svgs/6cf6441e282f47db0b45579b54503b07.svg?invert_in_darkmode" align=middle width=343.48524705pt height=118.35736770000001pt/></p>
 
-<p align="center"><img src="svgs/b4a0fa9fc2087e118d5c97ddb9dc0a0b.svg?invert_in_darkmode" align=middle width=438.00400709999997pt height=120.20846475pt/></p>
+<p align="center"><img src="svgs/cdd9c97351d2852cca8d647b0fdfb93b.svg?invert_in_darkmode" align=middle width=438.00400709999997pt height=139.1657751pt/></p>
 
 <p align="center"><img src="svgs/da595163b53361844b1b6488c5e5c679.svg?invert_in_darkmode" align=middle width=365.81203724999995pt height=69.0417981pt/></p>
 
@@ -167,7 +96,11 @@ This library uses the following model:
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;V^{SB}" title="\bg_white V^{SB}" />: Substation's voltage
 
+<img src="svgs/d36129378f3e3dd4b3157b9b640cd94e.svg?invert_in_darkmode" align=middle width=42.27444209999999pt height=27.6567522pt/>: Time to  curtailment energy resources  
+
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;M" title="\bg_white M" />: A big number
+
+<img src="svgs/a1bcca6b26bdfc2be1eb755a53298c5f.svg?invert_in_darkmode" align=middle width=44.429233199999985pt height=27.6567522pt/>: DERs' energy capacity.
 
 <img src="svgs/5de3395d9a962facf1228570f1570c3e.svg?invert_in_darkmode" align=middle width=96.65405474999999pt height=36.6389529pt/>: Upper limits of active and reactive power that can be dispached by DERs.
 
@@ -176,6 +109,8 @@ This library uses the following model:
 <img src="svgs/8a57ec50a9fa4dfedfe3cc701d1153a9.svg?invert_in_darkmode" align=middle width=42.37443869999999pt height=27.6567522pt/>: DERs' power limit.
 
 <img src="svgs/a2369470b5770634fad738b057fd1609.svg?invert_in_darkmode" align=middle width=41.923553099999985pt height=27.6567522pt/>: Proportion of DERs' power limit that can be dispached by DisCo.
+
+<img src="svgs/09e4e271511208a731624abd23a74597.svg?invert_in_darkmode" align=middle width=41.51258924999999pt height=27.6567522pt/>:  Proportion of  DERs' Energy Capacity that can be used by DisCo.
 
 <img src="svgs/fae5399046b45871e8d75acb5fda8054.svg?invert_in_darkmode" align=middle width=44.18382704999999pt height=27.6567522pt/>: DERs' owner power injection capacity. <img src="svgs/1f4b9873ee655894fbfe1455ad442377.svg?invert_in_darkmode" align=middle width=193.1390175pt height=27.6567522pt/>
 

@@ -14,8 +14,10 @@ function test_null_der()
     @test null_der isa DistSystem.DER
     @test null_der.bus == buses[2]
     @test null_der.S_limit == 0.0
+    @test null_der.energy == 0.0
     @test null_der.alpha == 0.0
-    @test null_der.P_limit == [0.0, 0.0]
+    @test null_der.beta == 1.0
+    @test null_der.P_limit == [0.0, 0.0]   
     @test null_der.Q_limit == [0.0, 0.0]
     @test null_der.scenario == [0.0]
     @test null_der.Cost == [0.0, 0.0, 0.0]
@@ -107,6 +109,7 @@ function test_factory_system_case33_dist()
         @test collect(skipmissing(data.Q_MVAr)) == sys.QL
         @test [1.0] == sys.m_load
         @test [[0.0]] == sys.m_new_dg
+        @test 0.0 == sys.time_curr
         @test sub == sys.substation
         @test collect(skipmissing(data.Bus)) == sys.buses
         @test -collect(skipmissing(data.Bshunt_MVAr)) == sys.Bsh
