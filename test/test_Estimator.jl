@@ -249,6 +249,33 @@ function test_add_substation_constraint(sot, sys)
     return sot
 end
 
+function test_add_line_constraint(sot, sys)
+
+    G = real(sys.Y)
+    B = imag(sys.Y)
+
+    (Ω, bΩ, L, K, D, S) = Estimator.build_sets(sys)
+    F = sys.amp
+    Ωᴮ = keys(F)
+
+    f = sot[:f]
+    V = sot[:V]
+    for (i, j) ∈ Ωᴮ, l = L, k = K, s = S
+        vij_re = V[:Re, i, l, k, s] - V[:Re, j, l, k, s]
+        vij_im = V[:Im, i, l, k, s] - V[:Im, j, l, k, s]
+        @test f[:Re, i, j, l, k, s] == vij_re * G[i, j] - vij_im * B[i, j]
+        @test f[:Im, i, j, l, k, s] == vij_im * G[i, j] + vij_re * B[i, j]
+
+        obj = constraint_object(sot[:line_limit][i, j, l, k, s])
+        @test isequal_canonical(obj.func, f[:Re, i, j, l, k, s]^2 + f[:Im, i, j, l, k, s]^2)
+        @test obj.set == MOI.LessThan(F[(i, j)])
+    end
+
+    return sot
+
+
+end
+
 function test_add_power_injection_definition(sot, sys)
     (Ω, bΩ, L, K, D, S) = Estimator.build_sets(sys)
     B = Estimator.build_DER_set_buses(sys)
@@ -401,6 +428,7 @@ function runtests()
                 sot = test_add_I_V_relationship(sot, sys)
                 sot = test_add_S_VI_relationship(sot, sys)
                 sot = test_add_substation_constraint(sot, sys)
+                sot = test_add_line_constraint(sot, sys)
                 sot = test_add_power_injection_definition(sot, sys)
                 sot = test_add_ders_limits(sot, sys)
                 sot = test_nl_pf(sot, sys, case)
