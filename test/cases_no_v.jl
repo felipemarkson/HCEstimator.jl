@@ -52,7 +52,7 @@ function case3_dist_no_dgs()
     sys.m_load = [0.5, 0.8, 1.0]
     sys.m_new_dg = [-1.0, 0.0, 1]
 
-    return sys, "case3_dist"
+    return sys, "case3_dist_no_dgs"
 end
 
 function case33()
