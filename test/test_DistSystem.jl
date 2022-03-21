@@ -102,7 +102,7 @@ function test_factory_system_case33_dist()
     fb = collect(skipmissing(data.FB))
     tb = collect(skipmissing(data.TB))
 
-    amp = Dict((fb[k], t[k]) => amps[k] for k = 1:length(amps))
+    amp = Dict((fb[k], tb[k]) => amps[k] for k = 1:length(amps))
 
     sys = DistSystem.factory_system(data, VL, VH, sub)
 
