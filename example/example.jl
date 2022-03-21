@@ -23,7 +23,9 @@ sys = DistSystem.factory_system(
 der1 = DistSystem.DER(
     18,                  # Bus
     0.02,                # Sᴰᴱᴿ (MVA)
+    1.00,                # Eᴰᴱᴿ (MWh). For DG's make Eᴰᴱᴿ a big number
     0.05,                # αᴰᴱᴿ
+    0.05,                # βᴰᴱᴿ
     [0.0, 0.03],         # [Pᴰᴱᴿ_low, Pᴰᴱᴿ_upper]  (MW)
     [-0.03, 0.03],       # [Qᴰᴱᴿ_low, Qᴰᴱᴿ_upper]  (MVAr)
     [0.0, 1.0],          # Possible DER's Operation Scenarios ≠ μᴰᴱᴿ
@@ -32,13 +34,15 @@ der1 = DistSystem.DER(
 
 sys.dgs = [
     der1,
-    DistSystem.DER(22, 0.02, 0.05, [0.0, 0.0], [-0.03, 0.03], [0.0, 1.0], [0.0026, 10.26, 210]), #DG non-active dispatchable
-    DistSystem.DER(33, 0.02, 0.05, [-0.01, 0.01], [-0.01, 0.01], [-1.0, 0.0, 1.0], [0.0026, 10.26, 210]), #ESS
-    DistSystem.DER(25, 0.02, 0.0, [0.0, 0.0], [0.0, 0.0], [0.0, 1.0], [0.0026, 10.26, 210]), #DG non-dispatchable
+    DistSystem.DER(22, 0.02, 0.05, 0.0,  0.0,[0.0, 0.0], [-0.03, 0.03], [0.0, 1.0], [0.0026, 10.26, 210]), #DG non-active dispatchable
+    DistSystem.DER(33, 0.02, 0.05, 0.05, 0.05,[-0.01, 0.01], [-0.01, 0.01], [-1.0, 0.0, 1.0], [0.0026, 10.26, 210]), #ESS
+    DistSystem.DER(25, 0.02, 0.0, 0.00, 0.0,[0.0, 0.0], [0.0, 0.0], [0.0, 1.0], [0.0026, 10.26, 210]), #DG non-dispatchable
 ]
 
 sys.m_load = [0.5, 0.8, 1.0] # μᴸ
 sys.m_new_dg = [-1.0, 0.0, 1] # μᴴᶜ
+
+sys.time_curr = 1.0 # Tᶜᵘʳ
 
 model = build_model(Model(Ipopt.Optimizer), sys)
 set_silent(model)
