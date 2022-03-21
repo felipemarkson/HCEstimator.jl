@@ -193,12 +193,19 @@ function add_ders_limits(model, sys)
     μᴰᴱᴿ = build_DER_scenario(sys)
     pᴰᴱᴿ = model[:pᴰᴱᴿ]
     qᴰᴱᴿ = model[:qᴰᴱᴿ]
+    Eᴰᴱᴿ(d) = sys.dgs[d].energy
+    βᴰᴱᴿ(d) = sys.dgs[d].beta
+    Tᶜᵘʳ = sys.time_curr
     @constraint(model, disco_der_limit[d=D, l=L, k=K, s=S],
         pᴰᴱᴿ[d, l, k, s]^2 + qᴰᴱᴿ[d, l, k, s]^2 ≤ (αᴰᴱᴿ(d) * Sᴰᴱᴿ(d))^2
     )
 
     @constraint(model, der_limit[d=D, l=L, k=K, s=S],
         (μᴰᴱᴿ(k, d) * Pᴰᴱᴿ(d) + pᴰᴱᴿ[d, l, k, s])^2 + qᴰᴱᴿ[d, l, k, s]^2 ≤ Sᴰᴱᴿ(d)^2
+    )
+
+    @constraint(model, energy_limit[d=D, l=L, k=K, s=S],
+        -βᴰᴱᴿ(d)  * Eᴰᴱᴿ(d) ≤ Tᶜᵘʳ * pᴰᴱᴿ[d, l, k, s] ≤ βᴰᴱᴿ(d) * Eᴰᴱᴿ(d)
     )
 
 
