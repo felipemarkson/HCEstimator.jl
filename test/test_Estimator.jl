@@ -255,12 +255,12 @@ function test_add_line_constraint(sot, sys)
     for (i, j) ∈ Ωᴮ, l = L, k = K, s = S
         vij_re = V[:Re, i, l, k, s] - V[:Re, j, l, k, s]
         vij_im = V[:Im, i, l, k, s] - V[:Im, j, l, k, s]
-        @test f[:Re, i, j, l, k, s] == vij_re * G[i, j] - vij_im * B[i, j]
-        @test f[:Im, i, j, l, k, s] == vij_im * G[i, j] + vij_re * B[i, j]
+        @test f[:Re, (i, j), l, k, s] == vij_re * G[i, j] - vij_im * B[i, j]
+        @test f[:Im, (i, j), l, k, s] == vij_im * G[i, j] + vij_re * B[i, j]
 
-        obj = constraint_object(sot[:line_limit][i, j, l, k, s])
-        @test isequal_canonical(obj.func, f[:Re, i, j, l, k, s]^2 + f[:Im, i, j, l, k, s]^2)
-        @test obj.set == MOI.LessThan(F[(i, j)])
+        obj = constraint_object(sot[:line_limit][(i, j), l, k, s])
+        @test isequal_canonical(obj.func, f[:Re, (i, j), l, k, s]^2 + f[:Im, (i, j), l, k, s]^2)
+        @test obj.set == MOI.LessThan(F[(i, j)]^2)
     end
 
     return sot
