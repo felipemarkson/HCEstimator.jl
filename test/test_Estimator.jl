@@ -248,6 +248,8 @@ function test_add_line_constraint(sot, sys)
     Ωᴮ = keys(F)
     sot = Estimator.add_line_constraint(sot, sys)
 
+    @test sot isa Model
+
     f = sot[:f]
     V = sot[:V]
     for (i, j) ∈ Ωᴮ, l = L, k = K, s = S
