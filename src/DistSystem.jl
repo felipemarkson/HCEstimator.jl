@@ -18,7 +18,9 @@ end
 struct DER
     bus::Any
     S_limit::Float64
+    energy::Float64
     alpha::Float64
+    beta::Float64
     P_limit::Vector{Float64}
     Q_limit::Vector{Float64}
     scenario::Vector{Float64}
@@ -44,6 +46,7 @@ mutable struct System
     QL
     m_load
     m_new_dg
+    time_curr
     substation
     dgs
     Bsh
@@ -53,7 +56,7 @@ end
 
 function null_der(buses::Vector)::DER
     return DistSystem.DER(buses[2],
-        0.0, 0.0, [0.0, 0.0], [0.0, 0.0], [0.0], [0.0, 0.0, 0.0]
+        0.0, 0.0, 0.0, 1.0, [0.0, 0.0], [0.0, 0.0], [0.0], [0.0, 0.0, 0.0]
     )
 end
 
@@ -66,7 +69,7 @@ function factory_system(data::DataFrame, VL::Float64, VH::Float64, sub::Substati
     Zᴺ = (sub.nominal_voltage^2) / Sᴺ
     Yᴺ = 1 / Zᴺ
 
-
+    sys.time_curr = 0.0
     sys.Y = make_Y_bus(data, sub.nominal_voltage) / Yᴺ
     sys.nbuses = size(sys.Y)[1]
     sys.VL = VL
