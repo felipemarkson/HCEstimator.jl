@@ -87,20 +87,15 @@ function test_add_variables(sot, sys)
         @test sot isa Model
         @test num_variables(sot) == sys.nbuses * 2
 
-        @testset "V[$(i)]" for i = sys.buses
-            @testset "Start values" begin
-                @test start_value(sot[:V][:Re, i]) == 1.0
-                @test start_value(sot[:V][:Im, i]) == 0.0
-            end
+        for i = sys.buses
+            @test start_value(sot[:V][:Re, i]) == 1.0
+            @test start_value(sot[:V][:Im, i]) == 0.0
 
-            @testset "Lower bound" begin
-                @test lower_bound(sot[:V][:Re, i]) == -sys.VH
-                @test lower_bound(sot[:V][:Im, i]) == -sys.VH
-            end
-            @testset "Upper bound" begin
-                @test upper_bound(sot[:V][:Re, i]) == sys.VH
-                @test upper_bound(sot[:V][:Im, i]) == sys.VH
-            end
+            @test lower_bound(sot[:V][:Re, i]) == -sys.VH
+            @test lower_bound(sot[:V][:Im, i]) == -sys.VH
+
+            @test upper_bound(sot[:V][:Re, i]) == sys.VH
+            @test upper_bound(sot[:V][:Im, i]) == sys.VH
         end
     end
 
@@ -117,17 +112,13 @@ function test_add_voltage_constraints(sot, sys)
     V_module = sot[:V_module]
     V = sot[:V]
 
+    for i = sys.buses
+        @test V²[i] isa QuadExpr
+        @test V²[i] == V[:Re, i]^2 + V[:Im, i]^2
 
-    @testset "add_voltage_constraints" for i = sys.buses
-        @testset "V²" begin
-            @test V²[i] isa QuadExpr
-            @test V²[i] == V[:Re, i]^2 + V[:Im, i]^2
-        end
-        @testset "voltage_constraint" begin
-            obj = constraint_object(voltage_constraint[i])
-            @test isequal_canonical(obj.func, V²[i])
-            @test obj.set == MOI.Interval(sys.VL^2, sys.VH^2)
-        end
+        obj = constraint_object(voltage_constraint[i])
+        @test isequal_canonical(obj.func, V²[i])
+        @test obj.set == MOI.Interval(sys.VL^2, sys.VH^2)
     end
     return sot
 end
@@ -140,13 +131,9 @@ function test_add_I_V_relationship(sot, sys)
     G = real(sys.Y)
     B = imag(sys.Y)
 
-    @testset "add_I_V_relationship" for i = sys.buses
-        @testset "Iᴿᵉ" begin
-            @test I[:Re, i] == sum(G[i, j] * V[:Re, j] for j in sys.buses) - sum(B[i, j] * V[:Im, j] for j in sys.buses)
-        end
-        @testset "Iᴵᵐ" begin
-            @test I[:Im, i] == sum(B[i, j] * V[:Re, j] for j in sys.buses) + sum(G[i, j] * V[:Im, j] for j in sys.buses)
-        end
+    for i = sys.buses
+        @test I[:Re, i] == sum(G[i, j] * V[:Re, j] for j in sys.buses) - sum(B[i, j] * V[:Im, j] for j in sys.buses)
+        @test I[:Im, i] == sum(B[i, j] * V[:Re, j] for j in sys.buses) + sum(G[i, j] * V[:Im, j] for j in sys.buses)
     end
     return sot
 end
@@ -159,7 +146,7 @@ function test_add_S_VI_relationship(sot, sys)
     P = sot[:P]
     Q = sot[:Q]
 
-    @testset "add_S_VI_relationship" for i = sys.buses
+    for i = sys.buses
         @test P[i] == SimplePF.mc_re(V[:Re, i], V[:Im, i], I[:Re, i], -I[:Im, i])
         @test Q[i] == SimplePF.mc_im(V[:Re, i], V[:Im, i], I[:Re, i], -I[:Im, i])
     end
@@ -178,34 +165,23 @@ function test_add_substation_constraint(sot, sys)
     Plimit = float(sys.substation.P_limit)
     Qlimit = float(sys.substation.Q_limit)
 
-    @testset "add_substation_constraint" begin
-        @testset "Voltage" begin
-            @test is_fixed(V[:Re, i])
-            @test is_fixed(V[:Im, i])
-            @test fix_value(V[:Re, i]) == 1.0
-            @test fix_value(V[:Im, i]) == 0
-        end
-        @testset "Power" begin
-            @testset "Active" begin
-                obj = constraint_object(sot[:sub_plimit])
-                @test obj.set == MOI.Interval(0.0, Plimit)
-                @test isequal_canonical(obj.func, P[i])
-            end
+    @test is_fixed(V[:Re, i])
+    @test is_fixed(V[:Im, i])
+    @test fix_value(V[:Re, i]) == 1.0
+    @test fix_value(V[:Im, i]) == 0
 
-            @testset "Reactive" begin
-                obj = constraint_object(sot[:sub_qlimit])
-                @test obj.set == MOI.Interval(0.0, Qlimit)
-                @test isequal_canonical(obj.func, Q[i])
-            end
-        end
+    obj = constraint_object(sot[:sub_plimit])
+    @test obj.set == MOI.Interval(0.0, Plimit)
+    @test isequal_canonical(obj.func, P[i])
 
-        @testset "Current" begin
-            obj = constraint_object(sot[:sub_current])
-            @test isequal_canonical(obj.func, I[:Re, i]^2 + I[:Im, i]^2)
-            @test obj.set == MOI.GreaterThan(0.0)
-        end
+    obj = constraint_object(sot[:sub_qlimit])
+    @test obj.set == MOI.Interval(0.0, Qlimit)
+    @test isequal_canonical(obj.func, Q[i])
 
-    end
+    obj = constraint_object(sot[:sub_current])
+    @test isequal_canonical(obj.func, I[:Re, i]^2 + I[:Im, i]^2)
+    @test obj.set == MOI.GreaterThan(0.0)
+
     return sot
 end
 
@@ -219,22 +195,17 @@ function test_add_power_injection_definition(sot, sys)
     P = sot[:P]
     Q = sot[:Q]
 
-    @testset "add_power_injection_definition" begin
-        @testset "No definition for substation bus" begin
-            @test_throws KeyError p[subbus]
-            @test_throws KeyError q[subbus]
+    @test_throws KeyError p[subbus]
+    @test_throws KeyError q[subbus]
 
-        end
-        @testset "Active" for i = [i for i = sys.buses if i != subbus]
-            obj = constraint_object(p[i])
-            @test isequal_canonical(obj.func, P[i])
-            @test obj.set == MOI.EqualTo(-PL[i])
-        end
-        @testset "Reactive" for i = [i for i = sys.buses if i != subbus]
-            obj = constraint_object(q[i])
-            @test isequal_canonical(obj.func, Q[i])
-            @test obj.set == MOI.EqualTo(-QL[i])
-        end
+    for i = [i for i = sys.buses if i != subbus]
+        obj = constraint_object(p[i])
+        @test isequal_canonical(obj.func, P[i])
+        @test obj.set == MOI.EqualTo(-PL[i])
+
+        obj = constraint_object(q[i])
+        @test isequal_canonical(obj.func, Q[i])
+        @test obj.set == MOI.EqualTo(-QL[i])
     end
 
     return sot
@@ -258,7 +229,6 @@ function util_test_case!(model, sys, case)
         set_silent(model)
         optimize!(model)
 
-
         @testset "Optimization" begin
             @testset "Solved: $(termination_status(model))" begin
                 @test termination_status(model) == LOCALLY_SOLVED
@@ -270,15 +240,9 @@ function util_test_case!(model, sys, case)
 
         V = value.(model[:V_module])
         θ = value.(model[:V_angle_deg])
-        @testset "Solution for Bus $i" for i = sys.buses
-            v = round(V[i], digits = 4)
-            ang = round(θ[i], digits = 4)
-            @testset "Voltage: $v" begin
-                @test case.V_expected[i] ≈ V[i] atol = 1e-4
-            end
-            @testset "Angle: $(ang)°" begin
-                @test case.angle_expected[i] ≈ θ[i] atol = 1e-4
-            end
+        for i = sys.buses
+            @test case.V_expected[i] ≈ V[i] atol = 1e-4
+            @test case.angle_expected[i] ≈ θ[i] atol = 1e-4
         end
     end
 end
@@ -287,7 +251,6 @@ function test_solve_case(case)
     sys, actual_case = case()
     model = SimplePF.nl_pf(Model(), sys)
     util_test_case!(model, sys, actual_case)
-
 end
 
 function runtests()

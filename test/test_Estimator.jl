@@ -217,36 +217,55 @@ function test_add_substation_constraint(sot, sys)
     Plimit = float(sys.substation.P_limit)
     Qlimit = float(sys.substation.Q_limit)
 
-    @testset "add_substation_constraint" for l = L, k = K, s = S
-        @testset "Voltage" begin
-            @test !is_fixed(V[:Re, i, l, k, s])
-            @test is_fixed(V[:Im, i, l, k, s])
-            @test start_value(V[:Re, i, l, k, s]) == sys.substation.voltage
-            @test fix_value(V[:Im, i, l, k, s]) == 0
-        end
-        @testset "Power" begin
-            @testset "Active" begin
-                obj = constraint_object(sot[:sub_plimit][l, k, s])
-                @test obj.set == MOI.Interval(0.0, Plimit)
-                @test isequal_canonical(obj.func, P[i, l, k, s])
-            end
+    for l = L, k = K, s = S
+        @test !is_fixed(V[:Re, i, l, k, s])
+        @test is_fixed(V[:Im, i, l, k, s])
+        @test start_value(V[:Re, i, l, k, s]) == sys.substation.voltage
+        @test fix_value(V[:Im, i, l, k, s]) == 0
 
-            @testset "Reactive" begin
-                obj = constraint_object(sot[:sub_qlimit][l, k, s])
-                @test obj.set == MOI.Interval(0.0, Qlimit)
-                @test isequal_canonical(obj.func, Q[i, l, k, s])
-            end
-        end
+        obj = constraint_object(sot[:sub_plimit][l, k, s])
+        @test obj.set == MOI.Interval(0.0, Plimit)
+        @test isequal_canonical(obj.func, P[i, l, k, s])
 
-        @testset "Current" begin
-            obj = constraint_object(sot[:sub_current][l, k, s])
-            @test isequal_canonical(obj.func, I[:Re, i, l, k, s]^2 + I[:Im, i, l, k, s]^2)
-            @test obj.set == MOI.GreaterThan(0.0)
-        end
+        obj = constraint_object(sot[:sub_qlimit][l, k, s])
+        @test obj.set == MOI.Interval(0.0, Qlimit)
+        @test isequal_canonical(obj.func, Q[i, l, k, s])
 
+        obj = constraint_object(sot[:sub_current][l, k, s])
+        @test isequal_canonical(obj.func, I[:Re, i, l, k, s]^2 + I[:Im, i, l, k, s]^2)
     end
 
     return sot
+end
+
+function test_add_line_constraint(sot, sys)
+
+    G = real(sys.Y)
+    B = imag(sys.Y)
+
+    (Ω, bΩ, L, K, D, S) = Estimator.build_sets(sys)
+    F = sys.amp
+    Ωᴮ = keys(F)
+    sot = Estimator.add_line_constraint(sot, sys)
+
+    @test sot isa Model
+
+    f = sot[:f]
+    V = sot[:V]
+    for (i, j) ∈ Ωᴮ, l = L, k = K, s = S
+        vij_re = V[:Re, i, l, k, s] - V[:Re, j, l, k, s]
+        vij_im = V[:Im, i, l, k, s] - V[:Im, j, l, k, s]
+        @test f[:Re, (i, j), l, k, s] == vij_re * G[i, j] - vij_im * B[i, j]
+        @test f[:Im, (i, j), l, k, s] == vij_im * G[i, j] + vij_re * B[i, j]
+
+        obj = constraint_object(sot[:line_limit][(i, j), l, k, s])
+        @test isequal_canonical(obj.func, f[:Re, (i, j), l, k, s]^2 + f[:Im, (i, j), l, k, s]^2)
+        @test obj.set == MOI.LessThan(F[(i, j)]^2)
+    end
+
+    return sot
+
+
 end
 
 function test_add_power_injection_definition(sot, sys)
@@ -401,6 +420,7 @@ function runtests()
                 sot = test_add_I_V_relationship(sot, sys)
                 sot = test_add_S_VI_relationship(sot, sys)
                 sot = test_add_substation_constraint(sot, sys)
+                sot = test_add_line_constraint(sot, sys)
                 sot = test_add_power_injection_definition(sot, sys)
                 sot = test_add_ders_limits(sot, sys)
                 sot = test_nl_pf(sot, sys, case)

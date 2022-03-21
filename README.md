@@ -10,8 +10,8 @@ This library provides a Distributed Energy Resources' Hosting Capacity estimatio
 
 The ```DistSystem.System``` structure expected a [DataFrames.jl](https://dataframes.juliadata.org/stable/) with the follow columns:
 ```
-Row │ Branch  FB     TB     Type     R_Ohm    X_ohm    Bus      P_MW        Q_MVAr      Bshunt_MVAr
-    │ Int64   Int64  Int64  String   Float64  Float64  Int64    Float64     Float64     Float64
+Row │ Branch  FB     TB     Type     R_Ohm    X_ohm    Bus     Amp_pu    P_MW        Q_MVAr      Bshunt_MVAr
+    │ Int64   Int64  Int64  String   Float64  Float64  Int64   Float64   Float64     Float64     Float64
 ────┼──────────────────────────────────────────────────────────────────────────────────────────────────
 ```
 The active branches must have "Fixed" in ```Type``` field.
@@ -49,6 +49,8 @@ This library uses the following model:
 
 <p align="center"><img src="svgs/140c4fc7f4941ce36d531461eecea83c.svg?invert_in_darkmode" align=middle width=350.37468345pt height=49.315569599999996pt/></p>
 
+<p align="center"><img src="svgs/cc6ccc5eb6638967bd57b2084c7408c5.svg?invert_in_darkmode" align=middle width=421.12247099999996pt height=118.35736770000001pt/></p>
+
 <p align="center"><img src="svgs/6cf6441e282f47db0b45579b54503b07.svg?invert_in_darkmode" align=middle width=343.48524705pt height=118.35736770000001pt/></p>
 
 <p align="center"><img src="svgs/cdd9c97351d2852cca8d647b0fdfb93b.svg?invert_in_darkmode" align=middle width=438.00400709999997pt height=139.1657751pt/></p>
@@ -75,12 +77,16 @@ This library uses the following model:
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;v^{\Re},&space;v^{\Im}" title="\bg_white v^{\Re}, v^{\Im}" />: Real and imaginary part of nodal voltage
 
+<img src="svgs/444b8fe966ba1acdc573118df429030a.svg?invert_in_darkmode" align=middle width=46.89511529999999pt height=27.91243950000002pt/>:  Real and imaginary current flow
+
 
 ### Sets
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;\Omega" title="\bg_white \Omega" />: Buses' set
 
-<img src="https://latex.codecogs.com/svg.image?\bg_white&space;\overline{\Omega}" title="\bg_white \overline{\Omega}" />: Buses' set excluded substation bus and DERs buses
+<img src="https://latex.codecogs.com/svg.image?\bg_white&space;\overline{\Omega}" title="\bg_white \overline{\Omega}" />: Load buses without DERs
+
+<img src="svgs/6446d4b13a86884a30a20fc3209b6678.svg?invert_in_darkmode" align=middle width=22.364821049999986pt height=27.6567522pt/>: Set of branches
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;L" title="\bg_white L" />: Set of load scenarios
 
@@ -95,6 +101,10 @@ This library uses the following model:
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;\underline{V},&space;\overline{V}" title="\bg_white \underline{V}, \overline{V}" />: Lower and upper voltage limits
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;V^{SB}" title="\bg_white V^{SB}" />: Substation's voltage
+
+<img src="svgs/b8bc815b5e9d5177af01fd4d3d3c2f10.svg?invert_in_darkmode" align=middle width=12.85392569999999pt height=22.465723500000017pt/>: Lines' ampacity
+
+<img src="svgs/5201385589993766eea584cd3aa6fa13.svg?invert_in_darkmode" align=middle width=12.92464304999999pt height=22.465723500000017pt/>, <img src="svgs/61e84f854bc6258d4108d08d4c4a0852.svg?invert_in_darkmode" align=middle width=13.29340979999999pt height=22.465723500000017pt/>: Nodal conductance and susceptance
 
 <img src="svgs/d36129378f3e3dd4b3157b9b640cd94e.svg?invert_in_darkmode" align=middle width=42.27444209999999pt height=27.6567522pt/>: Time to  curtailment energy resources  
 

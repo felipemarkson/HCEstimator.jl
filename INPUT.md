@@ -10,8 +10,8 @@ This library provides a Distributed Energy Resources' Hosting Capacity estimatio
 
 The ```DistSystem.System``` structure expected a [DataFrames.jl](https://dataframes.juliadata.org/stable/) with the follow columns:
 ```
-Row │ Branch  FB     TB     Type     R_Ohm    X_ohm    Bus      P_MW        Q_MVAr      Bshunt_MVAr
-    │ Int64   Int64  Int64  String   Float64  Float64  Int64    Float64     Float64     Float64
+Row │ Branch  FB     TB     Type     R_Ohm    X_ohm    Bus     Amp_pu    P_MW        Q_MVAr      Bshunt_MVAr
+    │ Int64   Int64  Int64  String   Float64  Float64  Int64   Float64   Float64     Float64     Float64
 ────┼──────────────────────────────────────────────────────────────────────────────────────────────────
 ```
 The active branches must have "Fixed" in ```Type``` field.
@@ -93,6 +93,17 @@ $$
 \end{cases}
 $$
 
+$$
+\text{Lines limits}
+\begin{cases}
+f_{ijlks}^{\Re} = (v^{\Re}_{ilks} - v^{\Re}_{jlks})G_{ij} - (v^{\Im}_{ilks} - v^{\Im}_{jlks})B_ {ij}\\
+f_{ijlks}^{\Im} = (v^{\Im}_{ilks} - v^{\Im}_{jlks})G_{ij} + (v^{\Re}_{ilks} - v^{\Re}_{jlks})B_ {ij}\\
+(f_{ijlks}^{\Re})^2 + (f_{ijlks}^{\Im})^2 \leq (F_{ij})^2\\
+-F_{ij} \leq f_{ijlks}^{\Re}, f_{ijlks}^{\Im} \leq F_{ij}\\
+\forall (i,j) \in \Omega^{B}, \forall l \in L,\forall k \in K, \forall s \in S
+\end{cases}
+$$
+
 $$\begin{matrix}
 \text{Substation}\\
 \text{constraints}\\
@@ -155,12 +166,16 @@ $q^{DER}$: Reactive power injection of DERs dispached by DisCo.
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;v^{\Re},&space;v^{\Im}" title="\bg_white v^{\Re}, v^{\Im}" />: Real and imaginary part of nodal voltage
 
+$f^{\Re}, f^{\Im}$:  Real and imaginary current flow
+
 
 ### Sets
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;\Omega" title="\bg_white \Omega" />: Buses' set
 
-<img src="https://latex.codecogs.com/svg.image?\bg_white&space;\overline{\Omega}" title="\bg_white \overline{\Omega}" />: Buses' set excluded substation bus and DERs buses
+<img src="https://latex.codecogs.com/svg.image?\bg_white&space;\overline{\Omega}" title="\bg_white \overline{\Omega}" />: Load buses without DERs
+
+$\Omega^B$: Set of branches
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;L" title="\bg_white L" />: Set of load scenarios
 
@@ -175,6 +190,10 @@ $K$: Set of all possible combinations of operation of DERs' Owner
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;\underline{V},&space;\overline{V}" title="\bg_white \underline{V}, \overline{V}" />: Lower and upper voltage limits
 
 <img src="https://latex.codecogs.com/svg.image?\bg_white&space;V^{SB}" title="\bg_white V^{SB}" />: Substation's voltage
+
+$F$: Lines' ampacity
+
+$G$, $B$: Nodal conductance and susceptance
 
 $T^{CUR}$: Time to  curtailment energy resources  
 

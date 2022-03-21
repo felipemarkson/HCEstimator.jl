@@ -155,6 +155,32 @@ function add_substation_constraint(model, sys)
     return model
 end
 
+function add_line_constraint(model, sys)
+    G = real(sys.Y)
+    B = imag(sys.Y)
+
+    (Ω, bΩ, L, K, D, S) = Estimator.build_sets(sys)
+    F = sys.amp
+    Ωᴮ = keys(F)
+
+    V = model[:V]
+
+    vij(z, i, j, l, k, s) = V[z, i, l, k, s] - V[z, j, l, k, s]
+    @expression(model, f[z=[:Re, :Im], (i, j)=Ωᴮ, l=L, k=K, s=S],
+        if z == :Re
+            SimplePF.mc_re(vij(:Re, i, j, l, k, s), vij(:Im, i, j, l, k, s), G[i, j], B[i, j])
+        elseif z == :Im
+            SimplePF.mc_im(vij(:Re, i, j, l, k, s), vij(:Im, i, j, l, k, s), G[i, j], B[i, j])
+        end
+    )
+
+    @constraint(model, line_limit[(i, j)=Ωᴮ, l=L, k=K, s=S],
+        f[:Re, (i, j), l, k, s]^2 + f[:Im, (i, j), l, k, s]^2 ≤ (F[(i, j)])^2
+    )
+
+    return model
+end
+
 function add_power_injection_definition(model, sys)
     (Ω, bΩ, L, K, D, S) = Estimator.build_sets(sys)
     B = Estimator.build_DER_set_buses(sys)
@@ -205,7 +231,7 @@ function add_ders_limits(model, sys)
     )
 
     @constraint(model, energy_limit[d=D, l=L, k=K, s=S],
-        -βᴰᴱᴿ(d)  * Eᴰᴱᴿ(d) ≤ Tᶜᵘʳ * pᴰᴱᴿ[d, l, k, s] ≤ βᴰᴱᴿ(d) * Eᴰᴱᴿ(d)
+        -βᴰᴱᴿ(d) * Eᴰᴱᴿ(d) ≤ Tᶜᵘʳ * pᴰᴱᴿ[d, l, k, s] ≤ βᴰᴱᴿ(d) * Eᴰᴱᴿ(d)
     )
 
 
@@ -219,6 +245,7 @@ function nl_pf(model, sys)
     model = add_I_V_relationship(model, sys)
     model = add_S_VI_relationship(model, sys)
     model = add_substation_constraint(model, sys)
+    model = add_line_constraint(model, sys)
     model = add_power_injection_definition(model, sys)
     model = add_ders_limits(model, sys)
 
