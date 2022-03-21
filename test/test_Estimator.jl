@@ -41,7 +41,12 @@ function test_build_sets(sys)
     bΩ = filter(bus -> bus ∉ sub_der, Ω)
     L = collect(1:length(sys.m_load))
     D = collect(1:length(sys.dgs))
-    K = collect(1:reduce(*, length(der.scenario) for der in sys.dgs))
+    if isempty(sys.dgs)
+        K = [1]
+    else
+        K = collect(1:reduce(*, length(der.scenario) for der in sys.dgs))
+    end
+    
     S = collect(1:length(sys.m_new_dg))
 
     (Ωr, bΩr, Lr, Kr, Dr, Sr) = Estimator.build_sets(sys)
@@ -380,7 +385,7 @@ end
 function runtests()
 
     @testset "Estimator" begin
-        for case in [case3_dist, case33]
+        for case in [case3_dist, case33, case3_dist_no_dgs]
             sys, name = case()
             @testset "$name" begin
                 test_build_DER_scenario(sys, name)

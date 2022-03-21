@@ -1,7 +1,7 @@
 module DistSystem
 using DataFrames
 
-export Substation, DG, System, factory_system
+export Substation, DG, System, factory_system, null_der, DER
 
 include("Tools.jl")
 using .Tools: make_Y_bus
@@ -51,6 +51,12 @@ mutable struct System
     System() = new()
 end
 
+function null_der(buses::Vector)::DER
+    return DistSystem.DER(buses[2],
+        0.0, 0.0, [0.0, 0.0], [0.0, 0.0], [0.0], [0.0, 0.0, 0.0]
+    )
+end
+
 function factory_system(data::DataFrame, VL::Float64, VH::Float64, sub::Substation)
     sys = System()
 
@@ -69,10 +75,11 @@ function factory_system(data::DataFrame, VL::Float64, VH::Float64, sub::Substati
     sys.m_new_dg = [[0.0]]
     sys.PL = collect(skipmissing(data.P_MW))
     sys.QL = collect(skipmissing(data.Q_MVAr))
-    sys.dgs = []
+    sys.buses = collect(skipmissing(data.Bus))
     sys.Bsh = (-(collect(skipmissing(data.Bshunt_MVAr)) * 1e6) ./ (sub.nominal_voltage^2)) / Yᴺ
 
-    sys.buses = collect(skipmissing(data.Bus))
+    null_dg = null_der(sys.buses)
+    sys.dgs = [null_dg]
 
     sys.substation = sub
 

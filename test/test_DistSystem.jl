@@ -3,10 +3,24 @@ using Test
 using DataFrames, CSV
 
 include("../src/DistSystem.jl")
-include("case33_ybus.jl") 
+include("case33_ybus.jl")
 import .DistSystem
 export runtests
 
+function test_null_der()
+    buses = ["a", "2"]
+    null_der = DistSystem.null_der(buses)
+
+    @test null_der isa DistSystem.DER
+    @test null_der.bus == buses[2]
+    @test null_der.S_limit == 0.0
+    @test null_der.alpha == 0.0
+    @test null_der.P_limit == [0.0, 0.0]
+    @test null_der.Q_limit == [0.0, 0.0]
+    @test null_der.scenario == [0.0]
+    @test null_der.Cost == [0.0, 0.0, 0.0]
+
+end
 function test_factory_system_case3_dist()
     VN = 12500
     Sb = 1e6
@@ -35,9 +49,9 @@ function test_factory_system_case3_dist()
 
     @testset "case3_dist" begin
 
-        @testset "sys.Y[$i, $j]" for i=1:nbuses, j=1:nbuses
-            @test Y_target[i,j] ≈ sys.Y[i,j] atol=1e-4
-        end    
+        for i = 1:nbuses, j = 1:nbuses
+            @test Y_target[i, j] ≈ sys.Y[i, j] atol = 1e-4
+        end
         @test nbuses == sys.nbuses
         @test VL == sys.VL
         @test VH == sys.VH
@@ -46,10 +60,16 @@ function test_factory_system_case3_dist()
         @test [1.0] == sys.m_load
         @test [[0.0]] == sys.m_new_dg
         @test sub == sys.substation
-        @test [] == sys.dgs  
-        @test -collect(skipmissing(data.Bshunt_MVAr)) == sys.Bsh
         @test collect(skipmissing(data.Bus)) == sys.buses
-        
+        @test -collect(skipmissing(data.Bshunt_MVAr)) == sys.Bsh
+
+        # TODO: Find a way to test it better.
+        null_der = DistSystem.null_der(sys.buses)
+        fields = fieldnames(DistSystem.DER)
+        for field in fields
+            @test getfield(null_der, field) == getfield(sys.dgs[1], field)
+        end
+        @test_throws BoundsError sys.dgs[2]
     end
 end
 
@@ -67,7 +87,7 @@ function test_factory_system_case33_dist()
     VH = 1.05
 
     data = DataFrame(CSV.File("case33.csv"))
-       
+
     Y_target = get_ybus()
 
     sub = DistSystem.Substation(VN, bus_sub, Vsub, P_limt, Q_limit, [1.0, 2, 3])
@@ -77,9 +97,9 @@ function test_factory_system_case33_dist()
 
     @testset "case33" begin
 
-        @testset "sys.Y[$i, $j]" for i=1:nbuses, j=1:nbuses
-            @test Y_target[i,j] ≈ sys.Y[i,j] atol=1e-3
-        end    
+        for i = 1:nbuses, j = 1:nbuses
+            @test Y_target[i, j] ≈ sys.Y[i, j] atol = 1e-3
+        end
         @test nbuses == sys.nbuses
         @test VL == sys.VL
         @test VH == sys.VH
@@ -88,15 +108,22 @@ function test_factory_system_case33_dist()
         @test [1.0] == sys.m_load
         @test [[0.0]] == sys.m_new_dg
         @test sub == sys.substation
-        @test [] == sys.dgs  
-        @test -collect(skipmissing(data.Bshunt_MVAr)) == sys.Bsh
         @test collect(skipmissing(data.Bus)) == sys.buses
+        @test -collect(skipmissing(data.Bshunt_MVAr)) == sys.Bsh
         
+        # TODO: Find a way to test it better.
+        null_der = DistSystem.null_der(sys.buses)
+        fields = fieldnames(DistSystem.DER)
+        for field in fields
+            @test getfield(null_der, field) == getfield(sys.dgs[1], field)
+        end
+        @test_throws BoundsError sys.dgs[2]
     end
 end
 
 function runtests()
     @testset "DistSystem" begin
+        test_null_der()
         test_factory_system_case3_dist()
         test_factory_system_case33_dist()
     end
