@@ -7,6 +7,20 @@ include("case33_ybus.jl")
 import .DistSystem
 export runtests
 
+function test_null_der()
+    buses = ["a", "2"]
+    null_der = DistSystem.null_der(buses)
+
+    @test null_der isa DistSystem.DER
+    @test null_der.bus == buses[2]
+    @test null_der.S_limit == 0.0
+    @test null_der.alpha == 0.0
+    @test null_der.P_limit == [0.0, 0.0]
+    @test null_der.Q_limit == [0.0, 0.0]
+    @test null_der.scenario == [0.0]
+    @test null_der.Cost == [0.0, 0.0, 0.0]
+
+end
 function test_factory_system_case3_dist()
     VN = 12500
     Sb = 1e6
@@ -97,8 +111,9 @@ end
 
 function runtests()
     @testset "DistSystem" begin
+        test_null_der()
         test_factory_system_case3_dist()
-        test_factory_system_case33_dist()
+        test_factory_system_case33_dist()        
     end
 end
 
