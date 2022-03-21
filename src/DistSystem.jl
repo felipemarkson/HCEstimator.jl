@@ -44,6 +44,7 @@ mutable struct System
     VH
     PL
     QL
+    amp
     m_load
     m_new_dg
     time_curr
@@ -81,6 +82,10 @@ function factory_system(data::DataFrame, VL::Float64, VH::Float64, sub::Substati
     sys.buses = collect(skipmissing(data.Bus))
     sys.Bsh = (-(collect(skipmissing(data.Bshunt_MVAr)) * 1e6) ./ (sub.nominal_voltage^2)) / Yᴺ
 
+    amp_pu = collect(skipmissing(data.Amp_pu))
+    fb = collect(skipmissing(data.FB))
+    tb = collect(skipmissing(data.TB))
+    sys.amp = Dict((fb[k], tb[k]) => amp_pu[k] for k = 1:length(amp_pu))
     null_dg = null_der(sys.buses)
     sys.dgs = [null_dg]
 

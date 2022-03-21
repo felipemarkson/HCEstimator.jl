@@ -47,7 +47,11 @@ function test_factory_system_case3_dist()
     sub = DistSystem.Substation(VN, bus_sub, Vsub, P_limt, Q_limit, [1.0, 2, 3])
     Bsh = (-(data.Bshunt_MVAr * 1e6) ./ (sub.nominal_voltage^2)) / Yb
 
-    amp = collect(skipmissing(data.Amp_pu))
+    amps = collect(skipmissing(data.Amp_pu))
+    fb = collect(skipmissing(data.FB))
+    tb = collect(skipmissing(data.TB))
+
+    amp = Dict((fb[k], tb[k]) => amps[k] for k = 1:length(amps))
 
     sys = DistSystem.factory_system(data, VL, VH, sub)
 
@@ -64,7 +68,7 @@ function test_factory_system_case3_dist()
         @test [1.0] == sys.m_load
         @test [[0.0]] == sys.m_new_dg
         @test sub == sys.substation
-        @test amp = sys.amp
+        @test amp == sys.amp
         @test collect(skipmissing(data.Bus)) == sys.buses
         @test -collect(skipmissing(data.Bshunt_MVAr)) == sys.Bsh
 
@@ -120,7 +124,7 @@ function test_factory_system_case33_dist()
         @test [[0.0]] == sys.m_new_dg
         @test 0.0 == sys.time_curr
         @test sub == sys.substation
-        @test amp = sys.amp
+        @test amp == sys.amp
         @test collect(skipmissing(data.Bus)) == sys.buses
         @test -collect(skipmissing(data.Bshunt_MVAr)) == sys.Bsh
 
