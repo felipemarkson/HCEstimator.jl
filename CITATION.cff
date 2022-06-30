@@ -11,8 +11,8 @@ doi: 10.5281/zenodo.6784000
 date-released: 2022-06-30
 url: "https://github.com/felipemarkson/HCEstimator.jl"
 contact:
-  - email: "fmarkson@outlook.com
-    given-names: "Felipe"
-    family-names: "Monteiro"
+- email: "fmarkson@outlook.com
+  given-names: "Felipe"
+  family-names: "Monteiro"
 license: MIT
 
