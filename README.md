@@ -8,15 +8,17 @@ This library provides a Distributed Energy Resources' Hosting Capacity estimatio
 If you find HCEstimator useful in your work, we kindly request that you cite it as below
 
 ```bibtex
-@software{Felipe_felipemarkson_HCEstimator_jl_v0_0_1_2022,
-    author = {Felipe, Monteiro},
+@software{Monteiro_felipemarkson_HCEstimator_jl_v0_0_1_2022,
+    author = {Monteiro, Felipe},
     doi = {10.5281/zenodo.6784000},
+    license = {MIT},
     month = {6},
     title = {{felipemarkson/HCEstimator.jl: v0.0.1}},
     url = {https://github.com/felipemarkson/HCEstimator.jl},
     version = {0.0.1},
     year = {2022}
 }
+
 ```
 ## Getting Started
 
