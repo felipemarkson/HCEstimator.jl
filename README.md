@@ -4,6 +4,20 @@
 
 This library provides a Distributed Energy Resources' Hosting Capacity estimation of distribution systems considering that the Distribution Company can partially dispatch other DERs installed in the system.
 
+## Citing
+If you find HCEstimator useful in your work, we kindly request that you cite it as below
+
+```bibtex
+@software{Felipe_felipemarkson_HCEstimator_jl_v0_0_1_2022,
+    author = {Felipe, Monteiro},
+    doi = {10.5281/zenodo.6784000},
+    month = {6},
+    title = {{felipemarkson/HCEstimator.jl: v0.0.1}},
+    url = {https://github.com/felipemarkson/HCEstimator.jl},
+    version = {0.0.1},
+    year = {2022}
+}
+```
 ## Getting Started
 
 ### Data Format
