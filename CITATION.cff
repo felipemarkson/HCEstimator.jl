@@ -1,12 +1,18 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 authors:
-- family-names: "Felipe"
-  given-names: "Monteiro"
+- family-names: "Monteiro"
+  given-names: "Felipe"
   orcid: "https://orcid.org/0000-0002-3774-8384"
 title: "felipemarkson/HCEstimator.jl: v0.0.1"
+type: software
 version: 0.0.1
 doi: 10.5281/zenodo.6784000
 date-released: 2022-06-30
 url: "https://github.com/felipemarkson/HCEstimator.jl"
+contact:
+  - email: "fmarkson@outlook.com
+    given-names: "Felipe"
+    family-names: "Monteiro"
+license: MIT
 
