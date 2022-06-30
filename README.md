@@ -1,6 +1,7 @@
 <!-- INPUT FILE TO README FOR readme2tex! -->
 
 # Hosting Capacity Estimator
+[![DOI](https://zenodo.org/badge/465498806.svg)](https://zenodo.org/badge/latestdoi/465498806)
 
 This library provides a Distributed Energy Resources' Hosting Capacity estimation of distribution systems considering that the Distribution Company can partially dispatch other DERs installed in the system.
 
